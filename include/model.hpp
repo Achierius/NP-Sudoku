@@ -39,6 +39,6 @@ private:
     int getIndex(int row, int col);
 
     Grid _grid;
-}
+};
 
 #endif//__NP_SUDOKU_MODEL
