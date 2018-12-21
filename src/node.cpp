@@ -41,6 +41,8 @@ void Node::set(unsigned int value) {
 }
 
 unsigned int Node::value() { //TODO: Exceptions when called while !_determined
+    assert(_determined);
+
     if(_determined) {
         return _value;
     }
