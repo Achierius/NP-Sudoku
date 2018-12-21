@@ -14,8 +14,16 @@ public:
     LinearEquation(std::vector<double> coefficients, double constant);
 
     ~LinearEquation();
-    LinearEquation(const LinearEquation toCopy);
-    LinearEquation& operator=(const LinearEquation toCopy);
+    LinearEquation(const LinearEquation to_copy);
+    LinearEquation& operator=(const LinearEquation to_copy);
+
+    double constant();
+    double coefficient(int variable);
+    std::vector<double> coefficients();
+
+    void setConstant(double new_constant);
+    void setCoefficient(int variable, double new_coefficient);
+    void setCoefficients(std::vector<double> new_coefficients);
     
     bool validate(std::vector<double> values);
     double test(std::vector<double> values);
