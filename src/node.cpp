@@ -27,6 +27,10 @@ Node& Node::operator=(const Node& to_copy) {
     }
 }
 
+Node& Node::operator=(const int& to_set) {
+    this.set(to_set);
+}
+
 void Node::empty() {
     this._determined = false;
 }

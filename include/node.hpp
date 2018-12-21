@@ -10,6 +10,8 @@ public:
     Node(const Node& to_copy);
     Node& operator=(const Node& to_copy);
 
+    Node& operator=(const int& to_set);
+
     void empty();
     void set(unsigned int value);
 
