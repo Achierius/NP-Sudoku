@@ -15,8 +15,8 @@ public:
     LinearEquation(std::vector<double> coefficients, double constant);
 
     ~LinearEquation();
-    LinearEquation(const LinearEquation to_copy);
-    LinearEquation& operator=(const LinearEquation to_copy);
+    LinearEquation(const LinearEquation& to_copy);
+    LinearEquation& operator=(const LinearEquation& to_copy);
 
     double constant() const;
     double coefficient(int variable) const;
@@ -33,8 +33,8 @@ public:
                               const std::vector<double>& values) const;
 
 private:
-    void testCoefficients(const std::vector<double>& coefficients, std::string tag) const;
-    void testIndex(const int& index, std::string tag) const;
+    void testCoefficients(const std::vector<double>& coefficients, const std::string& tag) const;
+    void testIndex(const int& index, const std::string& tag) const;
 
     double _constant;
     std::vector<double> _coefficients;
