@@ -84,3 +84,12 @@ int Model::getIndex(int region, int row, int col) {
 int Model::getIndex(int row, int col) {
     return col + (ROWS * row);
 }
+
+bool determined() {
+    for(int i = 0; i < ROWS*COLS; i++) {
+        if(!_grid[i].determined()) {
+            return false;
+        }
+    }
+    return true;
+}
