@@ -2,6 +2,7 @@
 #define __NP_SUDOKU_LINEAR_EQUATION
 
 #include <vector>
+#include <string>
 
 /** Represent a linear equation in n variables of the form
   * a0*x0 + a1*x1 + ... + an*xn = c .
@@ -17,20 +18,24 @@ public:
     LinearEquation(const LinearEquation to_copy);
     LinearEquation& operator=(const LinearEquation to_copy);
 
-    double constant();
-    double coefficient(int variable);
-    std::vector<double> coefficients();
+    double constant() const;
+    double coefficient(int variable) const;
+    std::vector<double> coefficients() const;
 
     void setConstant(double new_constant);
     void setCoefficient(int variable, double new_coefficient);
-    void setCoefficients(std::vector<double> new_coefficients);
+    void setCoefficients(const std::vector<double>& new_coefficients);
     
-    bool validate(std::vector<double> values);
-    double test(std::vector<double> values);
-    LinearEquation substitute(int variable, double value);
-    LinearEquation substitute(std::vector<int> variables, std::vector<double> values);
+    bool validate(const std::vector<double>& values) const;
+    double test(const std::vector<double>& values) const;
+    LinearEquation substitute(int variable, double value) const;
+    LinearEquation substitute(const std::vector<int>& variables,
+                              const std::vector<double>& values) const;
 
 private:
+    void testCoefficients(const std::vector<double>& coefficients, std::string tag) const;
+    void testIndex(const int& index, std::string tag) const;
+
     double _constant;
     std::vector<double> _coefficients;
 
