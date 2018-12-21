@@ -1,4 +1,4 @@
-#include "../include/linear_equation.hpp"
+#include "linear_equation.hpp"
 
 LinearEquation::LinearEquation() {
     _constant = 0;
