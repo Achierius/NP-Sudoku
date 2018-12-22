@@ -8,7 +8,7 @@
 
 class Clause {
 public:
-  enum class Operator {
+  enum Operator {
     kIdentity = 0, kNegate,
     kAnd, kNand,
     kOr, kNor,
@@ -37,7 +37,7 @@ public:
   Bit evaluate(); //Undetermined if cannot be evaluate
 
 private:
-  Operator operator_gt;
+  Operator operator_;
   std::vector<Clause> clauses_;
 };
 
