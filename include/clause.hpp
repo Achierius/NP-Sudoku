@@ -19,6 +19,10 @@ public:
   Clause(std::vector<Clause> init, Operator opr);
   Clause(Clause& init, Operator opr);
 
+  ~Clause();
+  Clause(const Clause& to_copy);
+  Clause& operator=(const Clause& to_copy);
+
   void negate();
   void setOperator(Operator new_opr);
   Operator getOperator();
