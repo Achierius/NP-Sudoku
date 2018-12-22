@@ -40,29 +40,57 @@ Clause::Operator Clause::getOperator() {
 }
 
 int Clause::numClauses() {
-
+  return clauses_.size();
 }
 
 void Clause::addClause(Clause& clause) {
-
+  clauses_.push_back(clause);
 }
 
 void Clause::insertClause(Clause& clause, int index) {
-
+  auto itr = clauses_.begin();
+  for(int i = 0; itr != clauses_.end() && i < index; i++) {
+    itr++;
+  }
+  clauses_.insert(itr, clause);
 }
 
 Clause& Clause::getClause(int index) {
-
+  return clauses_[index];
 }
 
 Clause& Clause::removeClause(int index) {
-
+  auto itr = clauses_.begin();
+  for(int i = 0; itr != clauses_.end() && i < index; i++) {
+    itr++;
+  }
+  clauses_.erase(itr);
 }
 
 int Clause::evalNum() {
+  if(numClauses() == 0) {
+    return 1;
+  }
 
+  int sum = 0;
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    sum += itr->evalNum();
+  }
+  return sum;
 }
 
 Bit Clause::evaluate() {
-
+  Bit bit;
+  if(numClauses() == 0) {
+    return bit;
+  }
+  bit.setOn();
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    Bit eval = itr->evaluate();
+    if(!eval.determined() || !eval.state) {
+      bit.setOff();
+      return bit;
+    }
+  }
+  return bit;
 }
