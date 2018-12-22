@@ -84,10 +84,45 @@ Bit Clause::evaluate() {
   if(numClauses() == 0) {
     return bit;
   }
+
+  if(operator_ == Operator::kIdentity) {
+    return clauses_[0].evaluate();
+  }
+  else if(operator_ == Operator::kNegate) {
+    bit = clauses_[0].evaluate();
+    bit.flip();
+    return bit;
+  }
+
   bit.setOn();
   for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
     Bit eval = itr->evaluate();
-    if(!eval.determined() || !eval.state) {
+    if(!eval.determined()) {
+      bit.setOff();
+      return bit;
+    }
+    bool fail = false;
+    switch(operator_) {
+      case Operator::kAnd:
+        fail = !eval.state();
+        break;
+      case Operator::kNand:
+        fail = eval.state();
+        break;
+      case Operator::kOr:
+        fail = !eval.state() || !bit.state();
+        break;
+      case Operator::kNor:
+        fail = eval.state() || bit.state();
+        break;
+      case Operator::kXor:
+        fail = eval.state() == bit.state();
+        break;
+      case Operator::kNxor:
+        fail = eval.state() != bit.state();
+        break;
+    }
+    if(fail) {
       bit.setOff();
       return bit;
     }
