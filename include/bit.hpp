@@ -3,7 +3,7 @@
 
 #include "node.hpp"
 
-class Bit : Node {
+class Bit : public Node {
 public:
   void set(unsigned int value);
   void set(bool value);
