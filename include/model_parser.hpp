@@ -2,12 +2,13 @@
 #define __NP_SUDOKU_MODEL_PARSER
 
 #include "model.hpp"
+#include "clause.hpp"
 
-Model parseEqns(const std::vector<LinearEquation>& eqns);
+Model parseEqns(const Clause& eqns);
 
-std::vector<LinearEquation> parseModel(const Model& model);
+Clause& parseModel(const Model& model);
 
-bool verifyEqns(const std::vector<LinearEquation>& eqns);
+bool verifyEqns(const Clause& eqns);
 
 bool verifyModel(const Model& model);
 
