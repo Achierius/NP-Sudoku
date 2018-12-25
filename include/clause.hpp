@@ -31,8 +31,8 @@ public:
   int numClauses();
   void addClause(Clause& clause);
   void insertClause(Clause& clause, int index);
-  Clause& getClause(int index);
-  Clause& removeClause(int index);
+  Clause* getClause(int index);
+  void removeClause(int index);
 
   int evalNum(); //0 if evaluateable, else equals the number of variables which remain undetermined
   Bit evaluate(); //Undetermined if cannot be evaluate
