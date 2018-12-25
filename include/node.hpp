@@ -20,6 +20,6 @@ public:
 private:
     unsigned int _value;
     bool _determined;
-}
+};
 
 #endif//__NP_SUDOKU_NODE
