@@ -134,3 +134,7 @@ Bit Clause::evaluate() {
   bit.setOn();
   return bit;
 }
+
+bool reduce() {
+  
+}
