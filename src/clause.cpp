@@ -98,11 +98,9 @@ Bit Clause::evaluate() {
     return bit;
   }
 
-  bit.setOn();
   for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
     Bit eval = itr->evaluate();
     if(!eval.determined()) {
-      bit.setOff();
       return bit;
     }
     bool fail = false;
@@ -131,5 +129,6 @@ Bit Clause::evaluate() {
       return bit;
     }
   }
+  bit.setOn();
   return bit;
 }
