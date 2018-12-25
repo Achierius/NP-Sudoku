@@ -19,8 +19,10 @@ void Bit::set(bool value)  {
 }
 
 void Bit::flip() {
-  bool val = state();
-  this->set(!val);
+  if(this->determined()) {
+    bool val = state();
+    this->set(!val);
+  }
 }
 
 void Bit::setOff() {

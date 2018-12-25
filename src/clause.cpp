@@ -1,5 +1,7 @@
 #include "clause.hpp"
 
+#include <algorithm>
+
 Clause::Clause() {
   operator_ = Operator::kIdentity;
 }
@@ -32,11 +34,11 @@ Clause::Clause(const Clause& to_copy) {
 }
 
 void Clause::negate() {
-  operator_ = (Clause::Operator)(1 - (operator_ % 2));
+  operator_ = (Clause::Operator)(operator_ + (1 - 2 * (operator_ % 2)));
 }
 
 void Clause::setOperator(Clause::Operator new_opr) {
-  operator_ = (Clause::Operator)__max(0, (int)new_opr % 8);
+  operator_ = (Clause::Operator)std::max(0, (int)new_opr % 8);
 }
 
 Clause::Operator Clause::getOperator() {
@@ -98,11 +100,9 @@ Bit Clause::evaluate() {
     return bit;
   }
 
-  bit.setOn();
   for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
     Bit eval = itr->evaluate();
     if(!eval.determined()) {
-      bit.setOff();
       return bit;
     }
     bool fail = false;
@@ -131,5 +131,40 @@ Bit Clause::evaluate() {
       return bit;
     }
   }
+  bit.setOn();
   return bit;
+}
+
+bool Clause::reduce() {
+  if(this->numClauses() == 0) {
+    return false;
+  }
+  bool ret = false;
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    ret = ret || itr->reduce();
+  }
+  //Rule 4: Repeated Identity/Negation reduction, I don't think this is necessary
+  while(operator_ < 2 && this->numClauses() >= 1) {
+    //Rule 1: Identity reduction
+    if(operator_ == Operator::kIdentity) {
+      (*this) = this->clauses_[0]; //this works right?
+    }
+    //Rule 2: Negation reduction
+    if(operator_ == Operator::kNegate) {
+      (*this) = this->clauses_[0];
+      (*this).negate();
+    }
+  }
+
+  //Rule 3: Same operator collapse
+  std::vector<Clause> to_extend;
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    if(itr->getOperator() == getOperator()) {
+      to_extend.reserve(to_extend.size() + itr->clauses_.size());
+      to_extend.insert(to_extend.end(), itr->clauses_.begin(), itr->clauses_.end());
+    }
+  }
+  clauses_.reserve(clauses_.size() + to_extend.size());
+  clauses_.insert(clauses_.end(), to_extend.begin(), to_extend.end());
+  return ret;
 }

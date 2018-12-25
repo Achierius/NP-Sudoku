@@ -36,6 +36,7 @@ public:
 
   int evalNum(); //0 if evaluateable, else equals the number of variables which remain undetermined
   Bit evaluate(); //Undetermined if cannot be evaluate
+  bool reduce(); //Logically compact this clause and its tree of children into a smaller state; return false if nop
 
 private:
   Operator operator_;
