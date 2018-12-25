@@ -62,10 +62,69 @@ void testEquals() {
   cl_a = cl_b;
   assert(cl_a.getOperator() == o3);
   assert(cl_a.evalNum() == 1);
+  std::vector<Clause> a;
+  a.push_back(cl_a);
+  a.push_back(cl_b);
+  Clause cl_c(a, o7);
+  assert(cl_c.getOperator() == o7);
+  assert(cl_c.evalNum() == 2);
+  Clause cl_d(cl_c);
+  assert(cl_d.getOperator() == o7);
+  assert(cl_d.evalNum() == 2);
+  cl_c.removeClause(1);
+  assert(cl_c.evalNum() == 1);
+  assert(cl_d.evalNum() == 2);
+}
+
+void testNegate() {
+  Clause cl_a;
+  assert(cl_a.getOperator() == o0);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o1);
+  cl_a.setOperator(o2);
+  assert(cl_a.getOperator() == o2);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o3);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o2);
+}
+
+void testReduce() {
+  Clause test_a;
+  Clause append;
+  Clause* refr = &test_a;
+  for(int i = 0; i < 10; i++) {
+    if(i % 2) {
+      append.setOperator(o0);
+    } else {
+      append.setOperator(o2);
+    }
+    refr->addClause(append);
+    refr = refr->getClause(0);
+  }
+  int sum = 0;
+  refr = &test_a;
+  while(refr->numClauses() > 0) {
+    sum++;
+    refr = refr->getClause(0);
+  }
+  assert(sum == 10);
+  assert(test_a.reduce());
+  sum = 0;
+  refr = &test_a;
+  while(refr->numClauses() > 0) {
+    sum++;
+    refr = refr->getClause(0);
+  }
+  assert(sum == 5);
+
+  Clause test_b;
 }
 
 int main() {
   testInit();
   testOperator();
   testEquals();
+  testNegate();
+  testReduce();
 }
