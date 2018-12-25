@@ -1,5 +1,7 @@
 #include "clause.hpp"
 
+#include <algorithm>
+
 Clause::Clause() {
   operator_ = Operator::kIdentity;
 }
@@ -32,11 +34,11 @@ Clause::Clause(const Clause& to_copy) {
 }
 
 void Clause::negate() {
-  operator_ = (Clause::Operator)(1 - (operator_ % 2));
+  operator_ = (Clause::Operator)(operator_ + (1 - 2 * (operator_ % 2)));
 }
 
 void Clause::setOperator(Clause::Operator new_opr) {
-  operator_ = (Clause::Operator)__max(0, (int)new_opr % 8);
+  operator_ = (Clause::Operator)std::max(0, (int)new_opr % 8);
 }
 
 Clause::Operator Clause::getOperator() {
