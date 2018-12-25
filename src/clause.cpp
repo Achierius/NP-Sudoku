@@ -61,11 +61,11 @@ void Clause::insertClause(Clause& clause, int index) {
   clauses_.insert(itr, clause);
 }
 
-Clause& Clause::getClause(int index) {
-  return clauses_[index];
+Clause* Clause::getClause(int index) {
+  return &clauses_[index];
 }
 
-Clause& Clause::removeClause(int index) {
+void Clause::removeClause(int index) {
   auto itr = clauses_.begin();
   for(int i = 0; itr != clauses_.end() && i < index; i++) {
     itr++;
@@ -143,17 +143,18 @@ bool Clause::reduce() {
   for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
     ret = ret || itr->reduce();
   }
-  //Rule 4: Repeated Identity/Negation reduction, I don't think this is necessary
-  while(operator_ < 2 && this->numClauses() >= 1) {
-    //Rule 1: Identity reduction
-    if(operator_ == Operator::kIdentity) {
-      (*this) = this->clauses_[0]; //this works right?
-    }
-    //Rule 2: Negation reduction
-    if(operator_ == Operator::kNegate) {
-      (*this) = this->clauses_[0];
-      (*this).negate();
-    }
+
+  //Rule 1: Identity reduction
+  if(operator_ == Operator::kIdentity) {
+    (*this) = this->clauses_[0]; //this works right?
+    ret = true;
+  }
+
+  //Rule 2: Negation reduction
+  if(operator_ == Operator::kNegate) {
+    (*this) = this->clauses_[0];
+    (*this).negate();
+    ret = true;
   }
 
   //Rule 3: Same operator collapse
@@ -162,6 +163,7 @@ bool Clause::reduce() {
     if(itr->getOperator() == getOperator()) {
       to_extend.reserve(to_extend.size() + itr->clauses_.size());
       to_extend.insert(to_extend.end(), itr->clauses_.begin(), itr->clauses_.end());
+      ret = true;
     }
   }
   clauses_.reserve(clauses_.size() + to_extend.size());
