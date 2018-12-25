@@ -4,6 +4,10 @@ Clause::Clause() {
   operator_ = Operator::kIdentity;
 }
 
+Clause::Clause(Operator opr) {
+  operator_ = opr;
+}
+
 Clause::Clause(std::vector<Clause> init, Operator opr) {
   clauses_ = std::vector<Clause>(init);
   operator_ = opr;

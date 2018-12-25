@@ -16,6 +16,7 @@ public:
   };
 
   Clause();
+  Clause(Operator opr);
   Clause(std::vector<Clause> init, Operator opr);
   Clause(Clause& init, Operator opr);
 
