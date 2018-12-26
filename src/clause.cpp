@@ -177,3 +177,127 @@ bool Clause::reduce() {
   clauses_.insert(clauses_.end(), to_extend.begin(), to_extend.end());
   return ret;
 }
+
+bool Clause::identityCompress() {
+  bool ret = false;
+  if(numClauses() == 0) {
+    return ret;
+  }
+
+  if(operator_ == kIdentity) {
+    clauses_.erase(clauses_.begin() + 1, clauses_.end());
+    operator_ = clauses_[0].operator_;
+    clauses_ = std::vector<Clause>(clauses_[0].clauses_);
+    ret = true;
+    identityCompress();
+  } else {
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      ret = ret || itr->identityCompress();
+    }
+  }
+
+  return ret;
+}
+
+bool Clause::negationDecompress() {
+  bool ret = false;
+  if(numClauses() == 0) {
+    return ret;
+  }
+
+  if(operator_ % 2 == 1) {
+    std::vector<Clause> old_clauses(clauses_);
+    Operator new_operator = (Operator)(operator_ - 1);
+    Clause new_child(old_clauses, new_operator);
+
+    operator_ = kNegate;
+    clauses_.clear();
+    clauses_.push_back(new_child);
+
+    clauses_[0].negationDecompress();
+
+    ret = true;
+  } else {
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      ret = ret || itr->negationDecompress();
+    }
+  }
+}
+
+bool Clause::operatorCompress() {
+  bool ret = false;
+  if(numClauses() == 0) {
+    return ret;
+  }
+
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    ret = ret || itr->operatorCompress();
+  }
+
+  std::vector<Clause> to_extend;
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    if(itr->getOperator() == getOperator()) {
+      to_extend.reserve(to_extend.size() + itr->clauses_.size());
+      to_extend.insert(to_extend.end(), itr->clauses_.begin(), itr->clauses_.end());
+      ret = true;
+    }
+  }
+  clauses_.erase(
+    std::remove_if(clauses_.begin(), clauses_.end(), [this](Clause c){return c.getOperator() == getOperator();}),
+    clauses_.end());
+  clauses_.reserve(clauses_.size() + to_extend.size());
+  clauses_.insert(clauses_.end(), to_extend.begin(), to_extend.end());
+
+  return ret;
+}
+
+void Clause::negationSink() {
+  if(numClauses() == 0) {
+    negate();
+  } else {
+    if(operator_ == kAnd) {
+      operator_ == kOr;
+    } else if (operator_ == kOr) {
+      operator_ == kAnd;
+    }
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      itr->negationSink();
+    }
+  }
+}
+bool Clause::negationDescend() {
+  bool ret = false;
+  if(numClauses() == 0) {
+    return ret;
+  }
+
+  if(operator_ == kNegate) {
+    clauses_.erase(clauses_.begin() + 1, clauses_.end());
+    clauses_[0].negationSink();
+    operator_ = clauses_[0].getOperator();
+    clauses_ = std::vector<Clause>(clauses_[0].clauses_);
+
+    ret = true;
+  } else {
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      itr->negationDescend();
+    }
+  }
+
+  return ret;
+}
+
+bool Clause::cnf() {
+  bool ret = false;
+  //Step 1: Remove all Xor/Nxor operators
+  //Step 2: Compress all identity operators
+  ret = ret || identityCompress();
+  //Step 3: Decompress all negation operators
+  ret = ret || negationDecompress();
+  //Step 4: Descend negation operators downwards
+  ret = ret || negationDescend();
+  //Step 5: Compact repeated operators
+  ret = ret || operatorCompress();
+  //Step 6: Distribute And operators
+  //Step 7: Distribute Or operators
+}

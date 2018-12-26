@@ -36,9 +36,16 @@ public:
 
   int evalNum(); //0 if evaluateable, else equals the number of variables which remain undetermined
   Bit evaluate(); //Undetermined if cannot be evaluate
-  bool reduce(); //Logically compact this clause and its tree of children into a smaller state; return false if nop
+  bool reduce(); //Logically compact this clause and its tree of children into a smaller number of clauses; return false if nop
+  bool cnf(); //Morph tree into conjunctive normal form; return false if nop
 
 private:
+  bool identityCompress();
+  bool negationDecompress();
+  bool operatorCompress();
+  void negationSink();
+  bool negationDescend();
+
   Operator operator_;
   std::vector<Clause> clauses_;
 };
