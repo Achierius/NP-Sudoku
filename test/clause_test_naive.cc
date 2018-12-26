@@ -155,8 +155,24 @@ void testReduceRule3() {
   assert(test_b.numClauses() == 21);
 }
 
+void testReduceRule2() {
+  Clause test_d(o2);
+  Clause test_c(test_d, o1);
+  Clause test_b(test_c, o5);
+  Clause test_a(test_b, o1);
+  assert(test_a.getOperator() == o1);
+  test_a.reduce();
+  assert(test_a.getOperator() == o4);
+  assert(test_a.numClauses() == 1);
+  assert(test_a.getClause(0)->getOperator() == o3);
+  Clause test_aa(test_a, o1);
+  test_aa.reduce();
+  assert(test_aa.getOperator() == o5);
+}
+
 void testReduce() {
   testReduceRule1();
+  testReduceRule2();
   testReduceRule3();
 }
 
