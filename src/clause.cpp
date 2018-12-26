@@ -136,24 +136,28 @@ Bit Clause::evaluate() {
 }
 
 bool Clause::reduce() {
-  if(this->numClauses() == 0) {
-    return false;
-  }
   bool ret = false;
+
+  if(this->numClauses() == 0) {
+    return ret;
+  }
+
   for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
     ret = ret || itr->reduce();
   }
 
   //Rule 1: Identity reduction
   if(operator_ == Operator::kIdentity) {
-    (*this) = this->clauses_[0]; //this works right?
+    this->operator_ = clauses_[0].operator_;
+    this->clauses_ = std::vector<Clause>(clauses_[0].clauses_);
     ret = true;
   }
 
   //Rule 2: Negation reduction
   if(operator_ == Operator::kNegate) {
-    (*this) = this->clauses_[0];
-    (*this).negate();
+    this->operator_ = clauses_[0].operator_;
+    this->clauses_ = std::vector<Clause>(clauses_[0].clauses_);
+    negate();
     ret = true;
   }
 
@@ -166,6 +170,9 @@ bool Clause::reduce() {
       ret = true;
     }
   }
+  clauses_.erase(
+    std::remove_if(clauses_.begin(), clauses_.end(), [this](Clause c){return c.getOperator() == getOperator();}),
+    clauses_.end());
   clauses_.reserve(clauses_.size() + to_extend.size());
   clauses_.insert(clauses_.end(), to_extend.begin(), to_extend.end());
   return ret;
