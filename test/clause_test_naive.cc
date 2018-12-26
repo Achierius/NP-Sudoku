@@ -89,7 +89,7 @@ void testNegate() {
   assert(cl_a.getOperator() == o2);
 }
 
-void testReduce() {
+void testReduceRule1() {
   Clause test_a;
   Clause append;
   Clause* refr = &test_a;
@@ -97,11 +97,17 @@ void testReduce() {
     if(i % 2) {
       append.setOperator(o0);
     } else {
-      append.setOperator(o2);
+      if(i % 4) {
+        append.setOperator(o2);
+      }
+      else {
+        append.setOperator(o4);
+      }
     }
     refr->addClause(append);
     refr = refr->getClause(0);
   }
+
   int sum = 0;
   refr = &test_a;
   while(refr->numClauses() > 0) {
@@ -116,9 +122,42 @@ void testReduce() {
     sum++;
     refr = refr->getClause(0);
   }
-  assert(sum == 5);
 
-  Clause test_b;
+  assert(sum == 5);
+}
+void testReduceRule3() {
+  Clause an_1;
+  std::vector<Clause> init;
+  init.push_back(an_1);
+  init.push_back(an_1);
+  init.push_back(an_1);
+  Clause c_and(init, o2);
+  Clause c_or(init, o4);
+
+  Clause test_a;
+  test_a.setOperator(o2);
+  for(int i = 0; i < 9; i++) {
+    if(i % 3) {
+      test_a.addClause(c_or);
+    } else {
+      test_a.addClause(c_and);
+    }
+  }
+
+  Clause test_b(test_a);
+  test_b.setOperator(o4);
+  assert(test_a.numClauses() == 9);
+  test_a.reduce();
+
+  assert(test_a.numClauses() == 15);
+  assert(test_b.numClauses() == 9);
+  test_b.reduce();
+  assert(test_b.numClauses() == 21);
+}
+
+void testReduce() {
+  testReduceRule1();
+  testReduceRule3();
 }
 
 int main() {
