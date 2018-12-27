@@ -1,7 +1,6 @@
 #ifndef __NP_SUDOKU_CLAUSE
 #define __NP_SUDOKU_CLAUSE
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include "bit.hpp"
@@ -39,12 +38,15 @@ public:
   bool reduce(); //Logically compact this clause and its tree of children into a smaller number of clauses; return false if nop
   bool cnf(); //Morph tree into conjunctive normal form; return false if nop
 
+  int depth();
+
 private:
   bool identityCompress();
   bool negationDecompress();
   bool operatorCompress();
   void negationSink();
   bool negationDescend();
+
 
   Operator operator_;
   std::vector<Clause> clauses_;

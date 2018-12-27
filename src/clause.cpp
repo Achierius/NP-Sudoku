@@ -1,6 +1,9 @@
 #include "clause.hpp"
 
 #include <algorithm>
+#include <iostream>
+#include <tuple>
+#include <string>
 
 Clause::Clause() {
   operator_ = Operator::kIdentity;
@@ -300,4 +303,12 @@ bool Clause::cnf() {
   ret = ret || operatorCompress();
   //Step 6: Distribute And operators
   //Step 7: Distribute Or operators
+}
+
+int Clause::depth() {
+  int ret = 0;
+  for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+    ret = std::max(ret, itr->depth());
+  }
+  return ret + 1;
 }

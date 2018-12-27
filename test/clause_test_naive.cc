@@ -176,10 +176,31 @@ void testReduce() {
   testReduceRule3();
 }
 
+void testDepth() {
+  Clause test_e2;
+  Clause test_e1(test_e2, o1);
+  Clause test_d;
+  test_d.addClause(test_e1);
+  test_d.addClause(test_e2);
+  Clause test_c;
+  test_c.addClause(test_d);
+  test_c.addClause(test_d);
+  test_c.addClause(test_e2);
+  Clause test_b(test_c, o1);
+  Clause test_a(test_b, o1);
+  test_a.addClause(test_e2);
+
+  assert(test_e2.depth() == 1);
+  assert(test_e1.depth() == 2);
+  assert(test_d.depth() == 3);
+  assert(test_a.depth() == 6);
+}
+
 int main() {
   testInit();
   testOperator();
   testEquals();
   testNegate();
   testReduce();
+  testDepth();
 }
