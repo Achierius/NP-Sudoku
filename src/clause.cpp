@@ -314,9 +314,22 @@ int Clause::depth() {
   return ret + 1;
 }
 
-void Clause::print_tree() {
+std::string Clause::cCd(Operator opr) {
+  if(opr % 2) {
+    return "\e[31m";
+  } else {
+    return "\e[36m";
+  }
+}
+
+std::string Clause::neu() {
+  return "\e[0m";
+}
+
+void Clause::print_tree(bool colored) {
   int offset = 0;
   std::string* lines = new std::string[depth()];
+  std::string* display = new std::string[depth()];
   std::string* inter = new std::string[depth() - 1];
   int* displacement = new int[depth()];
   for(int i = 0; i < depth(); i++) {
@@ -344,8 +357,10 @@ void Clause::print_tree() {
 
       if(offset > 0) {
         lines[depth] += std::string(offset, ' ') + current->displayFancy() + " ";
+        display[depth] += std::string(offset, ' ') + cCd(current->getOperator()) + current->displayFancy() + neu() + " ";
       } else {
         lines[depth] += current->displayFancy() + " ";
+        display[depth] += cCd(current->getOperator()) + current->displayFancy() + neu() + " ";
       }
       for(int i = 0; i < depth; i++) {
         displacement[i] = lines[depth].length();
@@ -431,11 +446,16 @@ void Clause::print_tree() {
   std::cout<<lines[0]<<"\n";
   for(int i = 1; i < this->depth(); i++) {
     std::cout<<inter[i - 1]<<"\n";
-    std::cout<<lines[i]<<"\n";
+    if(colored) {
+      std::cout<<display[i]<<"\n";
+    } else {
+      std::cout<<lines[i]<<"\n";
+    }
   }
   std::cout<<std::endl;
 
   delete[] lines;
+  delete[] display;
   delete[] inter;
   delete[] displacement;
 }

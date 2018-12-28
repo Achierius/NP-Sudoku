@@ -38,7 +38,7 @@ public:
   bool reduce(); //Logically compact this clause and its tree of children into a smaller number of clauses; return false if nop
   bool cnf(); //Morph tree into conjunctive normal form; return false if nop
 
-  void print_tree();
+  void print_tree(bool colored = true);
 
   int depth();
 
@@ -51,6 +51,9 @@ private:
   bool operatorCompress();
   void negationSink();
   bool negationDescend();
+
+  std::string cCd(Operator opr); //Color code of an operator
+  std::string neu(); //Neutral color code
 
   Operator operator_;
   std::vector<Clause> clauses_;
