@@ -38,7 +38,12 @@ public:
   bool reduce(); //Logically compact this clause and its tree of children into a smaller number of clauses; return false if nop
   bool cnf(); //Morph tree into conjunctive normal form; return false if nop
 
+  void print_tree();
+
   int depth();
+
+  char display();
+  std::string displayFancy();
 
 private:
   bool identityCompress();
@@ -46,7 +51,6 @@ private:
   bool operatorCompress();
   void negationSink();
   bool negationDescend();
-
 
   Operator operator_;
   std::vector<Clause> clauses_;

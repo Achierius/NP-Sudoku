@@ -4,6 +4,7 @@
 #include <iostream>
 #include <tuple>
 #include <string>
+#include <stack>
 
 Clause::Clause() {
   operator_ = Operator::kIdentity;
@@ -311,4 +312,127 @@ int Clause::depth() {
     ret = std::max(ret, itr->depth());
   }
   return ret + 1;
+}
+
+void Clause::print_tree() {
+  int offset = 0;
+  std::string* lines = new std::string[depth()];
+  std::string* inter = new std::string[depth() - 1];
+  int* displacement = new int[depth()];
+  for(int i = 0; i < depth(); i++) {
+    displacement[i] = 0;
+    lines[i] = " ";
+    if(i < depth() - 1){
+      inter[i] = " ";
+    }
+  }
+
+  std::stack<std::tuple<Clause*, int, int> > fringe;
+  fringe.push(std::make_tuple(this, 0, 0));
+  Clause* current;
+  int depth;
+  int deepiness;
+
+  while(!fringe.empty()) {
+    current = std::get<0>(fringe.top());
+    depth = std::get<1>(fringe.top());
+    deepiness = std::get<2>(fringe.top());
+    fringe.pop();
+
+    int offset = displacement[depth] - lines[depth].length();//displacement[depth] - lines[depth].length();
+
+    int deepinesser = deepiness;
+    for(auto itr = current->clauses_.begin(); itr != current->clauses_.end(); itr++) {
+      fringe.push(std::make_tuple(&(*itr), depth + 1, deepiness++));
+    }
+
+    if(offset > 0) {
+      lines[depth] = lines[depth] + std::string(3*offset, ' ') + current->displayFancy() + " ";
+    } else {
+      lines[depth] += current->displayFancy() + " ";
+    }
+    /*if(depth > 0) {
+      if(offset > 0) {
+        inter[depth - 1] += std::string(3*offset, '-');
+      }
+      if (displacement[depth - 1] == displacement[depth]) {
+        inter[depth - 1] += "|";
+      } else if(displacement[depth == 0]) {
+        inter[depth - 1] += "--|";
+      } else {
+        inter[depth - 1] += "--\\";
+      }
+    }*/
+    if(current->numClauses() > 0) {
+      if(offset > 0) {
+        inter[depth] += std::string(3*offset, ' ');
+      }
+      inter[depth] += "|";
+      for(int i = 1; i < current->numClauses(); i++) {
+        inter[depth] += "--\\";
+      }
+      inter[depth] += "  ";
+    }
+
+    for(int i = 0; i < depth; i++) {
+      displacement[i]++;
+    }
+  }
+
+  std::cout<<lines[0]<<"\n";
+  for(int i = 1; i < this->depth(); i++) {
+    //std::cout<<inter[i - 1]<<"\n";
+    std::cout<<lines[i]<<"\n";
+  }
+  std::cout<<std::endl;
+
+  delete[] lines;
+  delete[] inter;
+  delete[] displacement;
+}
+
+char Clause::display() {
+  switch(operator_) {
+    case kIdentity:
+      return '=';
+    case kNegate:
+      return '!';
+    case kAnd:
+      return '&';
+    case kNand:
+      return '$';
+    case kOr:
+      return '|';
+    case kNor:
+      return '(';
+    case kXor:
+      return '^';
+    case kNxor:
+      return '_';
+    default:
+      return '?';
+  }
+}
+
+std::string Clause::displayFancy() {
+  switch(operator_) {
+    case kIdentity:
+      return "==";
+    case kNegate:
+      return "!!";
+    case kAnd:
+      return "&&";
+    case kNand:
+      return "!&";
+    case kOr:
+      return "||";
+    case kNor:
+      return "!|";
+    case kXor:
+      return "^^";
+    case kNxor:
+      return "!^";
+    default:
+      return "??";
+  }
 }
