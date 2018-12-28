@@ -355,19 +355,6 @@ void Clause::print_tree() {
       }
     }
 
-    auto classifyForward = [=](int level, int starting) {
-      if(level > depth) {
-        return -1;
-      }
-      for(int i = starting; i < lines[level].length(); i++) {
-        if(lines[level + 1][i] != ' ') {
-          return 0;
-        } else if (lines[level][i] != ' ') {
-          return 1;
-        }
-      }
-      return 0;
-    };
     int maxLength = 0;
     for(int i = 0; i < this->depth(); i++) {
       maxLength = std::max((size_t)maxLength, lines[i].length());
@@ -379,24 +366,40 @@ void Clause::print_tree() {
     }
     for(int i = 0; i < this->depth() - 1; i++) {
       bool inToken = false;
+      bool cont = false;
       for(int j = 0; j < lines[i].length() && j < lines[i + 1].length(); j++) {
         if(lines[i][j] == ' ' && lines[i + 1][j] == ' ') {
-          inter[i] += ' ';
+          if(cont) {
+            inter[i] += '-';
+          } else {
+            inter[i] += ' ';
+          }
         } else if(lines[i][j] == ' ' && lines[i + 1][j] != ' ') {
-          inter[i] += ' ';
           if(inToken) {
             inToken = false;
-            if(classifyForward(i, j + 1) == 1) {
-              inter[i] += '-';
-            } else {
-              inter[i] += ' ';
+            bool needChar = false;
+            for(int k = j + 1; k < lines[i].length(); k++) {
+              if(lines[i][k] != ' ') {
+                cont = false;
+                needChar = true;
+                inter[i] += ' ';
+                break;
+              } else if (lines[i + 1][k] != ' ') {
+                cont = true;
+                needChar = true;
+                inter[i] += '-';
+                break;
+              }
+            }
+            if(needChar) {
+              //inter[i] += ' ';
             }
           } else {
             inToken = true;
             inter[i] += '\\';
           }
         } else if(lines[i][j] != ' ' && lines[i + 1][j] == ' ') {
-          if(classifyForward(i, j + 1) == 1) {
+          if(cont) {
             inter[i] += '-';
           } else {
             inter[i] += ' ';
@@ -404,10 +407,16 @@ void Clause::print_tree() {
         } else if(lines[i][j] != ' ' && lines[i + 1][j] != ' ') {
           if(inToken) {
             inToken = false;
-            if(classifyForward(i, j + 1) == 1) {
-              inter[i] += '-';
-            } else {
-              inter[i] += ' ';
+            for(int k = j + 1; k < lines[i].length(); k++) {
+              if(lines[i][k] != ' ') {
+                cont = false;
+                inter[i] += '3';
+                break;
+              } else if (lines[i + 1][k] != ' ') {
+                cont = true;
+                inter[i] += '-';
+                break;
+              }
             }
           } else {
             inToken = true;
