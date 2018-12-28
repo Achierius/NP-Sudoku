@@ -377,21 +377,22 @@ void Clause::print_tree() {
         } else if(lines[i][j] == ' ' && lines[i + 1][j] != ' ') {
           if(inToken) {
             inToken = false;
-            bool needChar = false;
+            bool needChar = true;
             for(int k = j + 1; k < lines[i].length(); k++) {
               if(lines[i][k] != ' ') {
                 cont = false;
-                needChar = true;
+                needChar = false;
                 inter[i] += ' ';
                 break;
               } else if (lines[i + 1][k] != ' ') {
                 cont = true;
-                needChar = true;
+                needChar = false;
                 inter[i] += '-';
                 break;
               }
             }
             if(needChar) {
+              cont = false;
               //inter[i] += ' ';
             }
           } else {
@@ -410,7 +411,7 @@ void Clause::print_tree() {
             for(int k = j + 1; k < lines[i].length(); k++) {
               if(lines[i][k] != ' ') {
                 cont = false;
-                inter[i] += '3';
+                inter[i] += ' ';
                 break;
               } else if (lines[i + 1][k] != ' ') {
                 cont = true;
