@@ -321,63 +321,98 @@ void Clause::print_tree() {
   int* displacement = new int[depth()];
   for(int i = 0; i < depth(); i++) {
     displacement[i] = 0;
-    lines[i] = " ";
+    lines[i] = "";
     if(i < depth() - 1){
-      inter[i] = " ";
+      inter[i] = "";
     }
   }
 
-  std::stack<std::tuple<Clause*, int, int> > fringe;
-  fringe.push(std::make_tuple(this, 0, 0));
-  Clause* current;
-  int depth;
-  int deepiness;
+  {
+    std::stack<std::tuple<Clause*, int, int> > fringe;
+    fringe.push(std::make_tuple(this, 0, 0));
+    Clause* current;
+    int depth;
+    int deepiness;
 
-  while(!fringe.empty()) {
-    current = std::get<0>(fringe.top());
-    depth = std::get<1>(fringe.top());
-    deepiness = std::get<2>(fringe.top());
-    fringe.pop();
+    while(!fringe.empty()) {
+      current = std::get<0>(fringe.top());
+      depth = std::get<1>(fringe.top());
+      deepiness = std::get<2>(fringe.top());
+      fringe.pop();
 
-    int offset = displacement[depth] - lines[depth].length();//displacement[depth] - lines[depth].length();
-    int deepinesser = deepiness;
+      int offset = std::max(displacement[depth], deepiness) - lines[depth].length();
 
-    while(lines[depth].length() < deepiness) {
-      lines[depth] += " ";
-      for(int i = 0; i <= depth; i++) {
-        displacement[i] += 1;
+      if(offset > 0) {
+        lines[depth] += std::string(offset, ' ') + current->displayFancy() + " ";
+      } else {
+        lines[depth] += current->displayFancy() + " ";
+      }
+      for(int i = 0; i < depth; i++) {
+        displacement[i] = lines[depth].length();
+      }
+      for(auto itr = current->clauses_.rbegin(); itr != current->clauses_.rend(); itr++) {
+        fringe.push(std::make_tuple(&(*itr), depth + 1, lines[depth].length() - 3));
       }
     }
 
-    for(auto itr = current->clauses_.begin(); itr != current->clauses_.end(); itr++) {
-      fringe.push(std::make_tuple(&(*itr), depth + 1, lines[depth].length()));
+    auto classifyForward = [=](int level, int starting) {
+      if(level > depth) {
+        return -1;
+      }
+      for(int i = starting; i < lines[level].length(); i++) {
+        if(lines[level + 1][i] != ' ') {
+          return 0;
+        } else if (lines[level][i] != ' ') {
+          return 1;
+        }
+      }
+      return 0;
+    };
+    int maxLength = 0;
+    for(int i = 0; i < this->depth(); i++) {
+      maxLength = std::max((size_t)maxLength, lines[i].length());
     }
-
-    if(offset > 0) {
-      lines[depth] = lines[depth] + std::string(3*offset, ' ') + current->displayFancy() + " ";
-    } else {
-      lines[depth] += current->displayFancy() + " ";
+    for(int i = 0; i < this->depth(); i++) {
+      while(lines[i].length() < maxLength) {
+        lines[i] += ' ';
+      }
     }
-    for(int i = 0; i < depth; i++) {
-      displacement[i]++;
-    }
-  }
-
-  for(int i = 0; i < depth - 1; i++) {
-    bool token = false;
-    for(int j = 0; j < lines[depth].length() && j < lines[depth + 1].length(); j++) {
-      if(lines[i][j] == ' ' && lines[i + 1][j] == ' ') {
-        inter[i] += ' ';
-      } else if(lines[i][j] == ' ' && lines[i + 1][j] != ' ') {
-
-      } else if(lines[i][j] != ' ' && lines[i + 1][j] == ' ') {
-
-      } else if(lines[i][j] != ' ' && lines[i + 1][j] != ' ') {
-        if(token) {
-          token = false;
-       //   if(MORE TOKENS LATER LMAO) {
-            
-       //   }
+    for(int i = 0; i < this->depth() - 1; i++) {
+      bool inToken = false;
+      for(int j = 0; j < lines[i].length() && j < lines[i + 1].length(); j++) {
+        if(lines[i][j] == ' ' && lines[i + 1][j] == ' ') {
+          inter[i] += ' ';
+        } else if(lines[i][j] == ' ' && lines[i + 1][j] != ' ') {
+          inter[i] += ' ';
+          if(inToken) {
+            inToken = false;
+            if(classifyForward(i, j + 1) == 1) {
+              inter[i] += '-';
+            } else {
+              inter[i] += ' ';
+            }
+          } else {
+            inToken = true;
+            inter[i] += '\\';
+          }
+        } else if(lines[i][j] != ' ' && lines[i + 1][j] == ' ') {
+          if(classifyForward(i, j + 1) == 1) {
+            inter[i] += '-';
+          } else {
+            inter[i] += ' ';
+          }
+        } else if(lines[i][j] != ' ' && lines[i + 1][j] != ' ') {
+          if(inToken) {
+            inToken = false;
+            if(classifyForward(i, j + 1) == 1) {
+              inter[i] += '-';
+            } else {
+              inter[i] += ' ';
+            }
+          } else {
+            inToken = true;
+            inter[i] += '|';
+          }
         }
       }
     }
@@ -385,7 +420,7 @@ void Clause::print_tree() {
 
   std::cout<<lines[0]<<"\n";
   for(int i = 1; i < this->depth(); i++) {
-    //std::cout<<inter[i - 1]<<"\n";
+    std::cout<<inter[i - 1]<<"\n";
     std::cout<<lines[i]<<"\n";
   }
   std::cout<<std::endl;
