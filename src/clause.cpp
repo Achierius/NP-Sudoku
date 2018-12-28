@@ -443,7 +443,11 @@ void Clause::print_tree(bool colored) {
     }
   }
 
-  std::cout<<lines[0]<<"\n";
+  if(colored) {
+    std::cout<<display[0]<<"\n";
+  } else {
+    std::cout<<lines[0]<<"\n";
+  }
   for(int i = 1; i < this->depth(); i++) {
     std::cout<<inter[i - 1]<<"\n";
     if(colored) {
