@@ -340,10 +340,17 @@ void Clause::print_tree() {
     fringe.pop();
 
     int offset = displacement[depth] - lines[depth].length();//displacement[depth] - lines[depth].length();
-
     int deepinesser = deepiness;
+
+    while(lines[depth].length() < deepiness) {
+      lines[depth] += " ";
+      for(int i = 0; i <= depth; i++) {
+        displacement[i] += 1;
+      }
+    }
+
     for(auto itr = current->clauses_.begin(); itr != current->clauses_.end(); itr++) {
-      fringe.push(std::make_tuple(&(*itr), depth + 1, deepiness++));
+      fringe.push(std::make_tuple(&(*itr), depth + 1, lines[depth].length()));
     }
 
     if(offset > 0) {
@@ -351,31 +358,28 @@ void Clause::print_tree() {
     } else {
       lines[depth] += current->displayFancy() + " ";
     }
-    /*if(depth > 0) {
-      if(offset > 0) {
-        inter[depth - 1] += std::string(3*offset, '-');
-      }
-      if (displacement[depth - 1] == displacement[depth]) {
-        inter[depth - 1] += "|";
-      } else if(displacement[depth == 0]) {
-        inter[depth - 1] += "--|";
-      } else {
-        inter[depth - 1] += "--\\";
-      }
-    }*/
-    if(current->numClauses() > 0) {
-      if(offset > 0) {
-        inter[depth] += std::string(3*offset, ' ');
-      }
-      inter[depth] += "|";
-      for(int i = 1; i < current->numClauses(); i++) {
-        inter[depth] += "--\\";
-      }
-      inter[depth] += "  ";
-    }
-
     for(int i = 0; i < depth; i++) {
       displacement[i]++;
+    }
+  }
+
+  for(int i = 0; i < depth - 1; i++) {
+    bool token = false;
+    for(int j = 0; j < lines[depth].length() && j < lines[depth + 1].length(); j++) {
+      if(lines[i][j] == ' ' && lines[i + 1][j] == ' ') {
+        inter[i] += ' ';
+      } else if(lines[i][j] == ' ' && lines[i + 1][j] != ' ') {
+
+      } else if(lines[i][j] != ' ' && lines[i + 1][j] == ' ') {
+
+      } else if(lines[i][j] != ' ' && lines[i + 1][j] != ' ') {
+        if(token) {
+          token = false;
+       //   if(MORE TOKENS LATER LMAO) {
+            
+       //   }
+        }
+      }
     }
   }
 
