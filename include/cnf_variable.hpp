@@ -3,8 +3,9 @@
 
 class CNFVariable {
 public:
+  using VarSize = char;
   /** Total number of possible identifiers, given a 1 byte char. */
-  const static int NUM_IDENTIFIERS = 128;
+  const static int NUM_IDENTIFIERS = 2 << (8*sizeof(VarSize) - 1);
 
   /** Object will have identifier_ == 1. */
   CNFVariable();

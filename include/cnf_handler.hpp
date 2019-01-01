@@ -9,6 +9,8 @@
 
 class CNFHandler {
 public:
+  friend CNFEquation;
+
   /** Creates a handler with a default-constructed
    *  CNFVariable.
    */
