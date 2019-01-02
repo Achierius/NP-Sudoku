@@ -17,7 +17,11 @@ public:
   /** Creates a handler with a default-constructed
    *  CNFVariable.
    */
-  CNFHandler();
+  CNFHandler() { }
+
+  CNFHandler(CNFVariable variable) {
+    variable_ = variable;
+  }
 
   /** Each handler is supposed to keep a list of clauses
    *  pointing at this specific CNFVariable, and there's
@@ -26,7 +30,7 @@ public:
    */
   CNFHandler(const CNFHandler& to_copy) = delete;
   CNFHandler& operator=(const CNFHandler& to_copy) = delete;
-  ~CNFHandler();
+  ~CNFHandler() = default;
 
   //TODO: Move semantics
 
@@ -35,23 +39,41 @@ public:
    *  if clause is already in clauses_, otherwise
    *  returns true. Does not add duplicate clauses.
    */
-  bool addClause(CNFClause& new_clause);
+  bool addClause(CNFClause& new_clause) {
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      if((**itr) == (*old_clause)) {
+        return false;
+      }
+    }
+    clauses_.push_back(make_shared<CNFClause>(new_clause));
+    return true;
+  }
   /** Removes given clause by checking equality
    *  with every clause in the list and removing the first
    *  clause to match.
    */
-  bool removeClause(CNFClause& old_clause);
+  bool removeClause(CNFClause& old_clause) {
+    for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
+      if((**itr) == (*old_clause)) {
+        clauses_.erase(itr);
+        return;
+      }
+    }
+  }
 
   /** Returns the size of clauses_. */
-  int numClauses();
+  int numClauses() {
+    return clauses_.size();
+  }
 
   /** Sets variable_ to new_variable. */
-  void setVariable(CNFVariable new_variable);
+  void setVariable(CNFVariable new_variable) {
+    variable_ = new_variable;
+  }
   /** Returns a copy of variable_. */
-  CNFVariable getVariable();
-
-  /** Does this make sense? Is it valid at all? */
-  const std::vector<std::shared_ptr<CNFClause> >::iterator clauses();
+  CNFVariable<T> getVariable() {
+    return variable_;
+  }
 
 private:
   /** Variable wrapped by the handler object. */
