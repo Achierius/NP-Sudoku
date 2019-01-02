@@ -7,9 +7,11 @@
 #include "cnf_equation.hpp"
 #include "cnf_variable.hpp"
 
-template<class T>
+template <class T>
 class CNFHandler {
 public:
+  using CNFClause = std::vector<T>;
+
   friend CNFEquation;
 
   /** Creates a handler with a default-constructed
@@ -49,7 +51,7 @@ public:
   CNFVariable getVariable();
 
   /** Does this make sense? Is it valid at all? */
-  const std::vector<std::shared_ptr<CNFEquation::CNFClause> >::iterator clauses();
+  const std::vector<std::shared_ptr<CNFClause> >::iterator clauses();
 
 private:
   /** Variable wrapped by the handler object. */
@@ -62,7 +64,7 @@ private:
    *  a specific CNFEquation for at least one CNFEquation.
    *  The pointer-references will remain valid during the
    *  lifespan of the given CNFEquation. */
-  std::vector<std::shared_ptr<CNFEquation::CNFClause> > clauses_;
+  std::vector<std::shared_ptr<CNFClause> > clauses_;
 };
 
 #endif//__NP_SUDOKU_CNF_HANDLER

@@ -10,10 +10,10 @@
 #include <tuple>
 #include <list>
 
-template<class T>
+template <class T>
 class CNFEquation {
 public:
-  using CNFClause = std::vector<CNFVariable::VarSize>;
+  using CNFClause = std::vector<T>;
 
   friend CNFHandler;
 
@@ -31,14 +31,14 @@ public:
    */
   int numVariables();
   /** Returns a list of variables currently in use. */
-  std::vector<CNFVariable::VarSize> getVariables();
+  std::vector<T> getVariables();
 
   /** Returns true if a variable is in use and is determined. */
-  bool hasValue(CNFVariable::VarSize varName);
+  bool hasValue(T varName);
   /** Returns the value of a variable if hasValue, otherwise false. */
-  bool getVariableValue(CNFVariable::VarSize varName);
+  bool getVariableValue(T varName);
   /** Returns true if the variable is in use. */
-  bool isVariable(CNFVariable::VarSize varName);
+  bool isVariable(T varName);
 
   /** Adds a clause to the end of _equation. */
   void addClause(CNFClause new_clause);
@@ -91,7 +91,7 @@ private:
    *  The index of a given CNFVariable in the array is equal to their
    *  identifier_ value minus 1.
    */
-  std::array<std::tuple<CNFHandler, bool>, CNFVariable::NUM_IDENTIFIERS> variables_;
+  std::array<std::tuple<CNFHandler, bool>, CNFVariable<T>::NUM_IDENTIFIERS> variables_;
 
   /** Calculates the number of unique-identifier variables present
    *  in equation_ and assigns that value to numVariables_.
