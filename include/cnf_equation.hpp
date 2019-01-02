@@ -10,6 +10,7 @@
 #include <tuple>
 #include <list>
 
+template<class T>
 class CNFEquation {
 public:
   using CNFClause = std::vector<CNFVariable::VarSize>;
