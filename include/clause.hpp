@@ -1,7 +1,6 @@
 #ifndef __NP_SUDOKU_CLAUSE
 #define __NP_SUDOKU_CLAUSE
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include "bit.hpp"
@@ -31,14 +30,31 @@ public:
   int numClauses();
   void addClause(Clause& clause);
   void insertClause(Clause& clause, int index);
-  Clause& getClause(int index);
-  Clause& removeClause(int index);
+  Clause* getClause(int index);
+  void removeClause(int index);
 
   int evalNum(); //0 if evaluateable, else equals the number of variables which remain undetermined
   Bit evaluate(); //Undetermined if cannot be evaluate
-  bool reduce(); //Logically compact this clause and its tree of children into a smaller state; return false if nop
+  bool reduce(); //Logically compact this clause and its tree of children into a smaller number of clauses; return false if nop
+  bool cnf(); //Morph tree into conjunctive normal form; return false if nop
+
+  void print_tree(bool colored = true);
+
+  int depth();
+
+  char display();
+  std::string displayFancy();
 
 private:
+  bool identityCompress();
+  bool negationDecompress();
+  bool operatorCompress();
+  void negationSink();
+  bool negationDescend();
+
+  std::string cCd(Operator opr); //Color code of an operator
+  std::string neu(); //Neutral color code
+
   Operator operator_;
   std::vector<Clause> clauses_;
 };

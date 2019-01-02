@@ -62,6 +62,138 @@ void testEquals() {
   cl_a = cl_b;
   assert(cl_a.getOperator() == o3);
   assert(cl_a.evalNum() == 1);
+  std::vector<Clause> a;
+  a.push_back(cl_a);
+  a.push_back(cl_b);
+  Clause cl_c(a, o7);
+  assert(cl_c.getOperator() == o7);
+  assert(cl_c.evalNum() == 2);
+  Clause cl_d(cl_c);
+  assert(cl_d.getOperator() == o7);
+  assert(cl_d.evalNum() == 2);
+  cl_c.removeClause(1);
+  assert(cl_c.evalNum() == 1);
+  assert(cl_d.evalNum() == 2);
+}
+
+void testNegate() {
+  Clause cl_a;
+  assert(cl_a.getOperator() == o0);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o1);
+  cl_a.setOperator(o2);
+  assert(cl_a.getOperator() == o2);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o3);
+  cl_a.negate();
+  assert(cl_a.getOperator() == o2);
+}
+
+void testReduceRule1() {
+  Clause test_a;
+  Clause append;
+  Clause* refr = &test_a;
+  for(int i = 0; i < 10; i++) {
+    if(i % 2) {
+      append.setOperator(o0);
+    } else {
+      if(i % 4) {
+        append.setOperator(o2);
+      }
+      else {
+        append.setOperator(o4);
+      }
+    }
+    refr->addClause(append);
+    refr = refr->getClause(0);
+  }
+
+  int sum = 0;
+  refr = &test_a;
+  while(refr->numClauses() > 0) {
+    sum++;
+    refr = refr->getClause(0);
+  }
+  assert(sum == 10);
+  assert(test_a.reduce());
+  sum = 0;
+  refr = &test_a;
+  while(refr->numClauses() > 0) {
+    sum++;
+    refr = refr->getClause(0);
+  }
+
+  assert(sum == 5);
+}
+void testReduceRule3() {
+  Clause an_1;
+  std::vector<Clause> init;
+  init.push_back(an_1);
+  init.push_back(an_1);
+  init.push_back(an_1);
+  Clause c_and(init, o2);
+  Clause c_or(init, o4);
+
+  Clause test_a;
+  test_a.setOperator(o2);
+  for(int i = 0; i < 9; i++) {
+    if(i % 3) {
+      test_a.addClause(c_or);
+    } else {
+      test_a.addClause(c_and);
+    }
+  }
+
+  Clause test_b(test_a);
+  test_b.setOperator(o4);
+  assert(test_a.numClauses() == 9);
+  test_a.reduce();
+
+  assert(test_a.numClauses() == 15);
+  assert(test_b.numClauses() == 9);
+  test_b.reduce();
+  assert(test_b.numClauses() == 21);
+}
+
+void testReduceRule2() {
+  Clause test_d(o2);
+  Clause test_c(test_d, o1);
+  Clause test_b(test_c, o5);
+  Clause test_a(test_b, o1);
+  assert(test_a.getOperator() == o1);
+  test_a.reduce();
+  assert(test_a.getOperator() == o4);
+  assert(test_a.numClauses() == 1);
+  assert(test_a.getClause(0)->getOperator() == o3);
+  Clause test_aa(test_a, o1);
+  test_aa.reduce();
+  assert(test_aa.getOperator() == o5);
+}
+
+void testReduce() {
+  testReduceRule1();
+  testReduceRule2();
+  testReduceRule3();
+}
+
+void testDepth() {
+  Clause test_e2;
+  Clause test_e1(test_e2, o1);
+  Clause test_d;
+  test_d.addClause(test_e1);
+  test_d.addClause(test_e2);
+  Clause test_c;
+  test_c.addClause(test_d);
+  test_c.addClause(test_d);
+  test_c.addClause(test_e2);
+  Clause test_b(test_c, o1);
+  Clause test_a(test_b, o1);
+  test_a.addClause(test_e2);
+
+  assert(test_e2.depth() == 1);
+  assert(test_e1.depth() == 2);
+  assert(test_d.depth() == 3);
+  assert(test_a.depth() == 6);
 }
 
 void testPrint() {
