@@ -64,8 +64,92 @@ void testEquals() {
   assert(cl_a.evalNum() == 1);
 }
 
+void testPrint() {
+  Clause c_a;
+  Clause c_b(c_a, o2);
+  c_b.addClause(c_a);
+  Clause c_d(c_a, o3);
+  c_d.addClause(c_a);
+
+  Clause c_e;
+  c_e.setOperator(o4);
+  c_e.addClause(c_a);
+  c_e.addClause(c_d);
+  c_e.addClause(c_d);
+  c_e.addClause(c_a);
+
+  Clause c_long;
+  Clause c_longg(c_long, o1);
+  Clause c_longgg(c_longg, o0);
+  Clause c_longggg(c_longgg, o1);
+  Clause c_longgggg(c_longggg, o0);
+  Clause c_boi(c_longgggg, o2);
+  c_boi.addClause(c_longgg);
+
+  Clause c_q(o6);
+  Clause c_qq(o5);
+  c_qq.addClause(c_a);
+  c_qq.addClause(c_a);
+  c_q.addClause(c_qq);
+  c_q.addClause(c_qq);
+  c_q.addClause(c_qq);
+
+  c_b.addClause(c_boi);
+  c_b.addClause(c_d);
+  c_b.addClause(c_e);
+  c_b.addClause(c_a);
+  c_b.addClause(c_q);
+
+  //c_b.print_tree();
+}
+
+void testCNF() {
+  Clause an_1;
+  Clause an_2(an_1, o3);
+  Clause an_3(o1);
+  an_2.addClause(an_3);
+
+  std::vector<Clause> init;
+  init.push_back(an_1);
+  init.push_back(an_1);
+  init.push_back(an_2);
+  Clause c_and(init, o2);
+  Clause c_or(init, o4);
+
+  Clause test_a;
+  test_a.setOperator(o2);
+  for(int i = 0; i < 9; i++) {
+    if(i % 3) {
+      test_a.addClause(c_or);
+    } else {
+      test_a.addClause(c_and);
+    }
+  }
+  Clause c_andd(c_and, o2);
+  c_andd.addClause(c_and);
+  c_andd.addClause(c_andd);
+  test_a.addClause(c_andd);
+
+  test_a.cnf();
+
+  Clause a(o2);
+  Clause o(o4);
+  Clause e;
+  o.addClause(e);
+  o.addClause(e);
+  for(int i = 0; i < 40; i++) {
+    a.addClause(o);
+  }
+  a.print_tree();
+}
+
 int main() {
   testInit();
   testOperator();
   testEquals();
+  testNegate();
+  testReduce();
+  testDepth();
+  testPrint();
+  testCNF();
 }
