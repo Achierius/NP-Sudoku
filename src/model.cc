@@ -2,7 +2,6 @@
 
 Model::Model() {
     _grid = new Node[ROWS*COLS];
-    
     for(int i = 0; i < ROWS*COLS; i++) {
         _grid[i].empty();
     }
@@ -10,14 +9,13 @@ Model::Model() {
 
 Model::Model(Model::Grid grid) {
     _grid = new Node[ROWS*COLS];
-    
     for(int i = 0; i < ROWS*COLS; i++) {
         _grid[i] = grid[i];
     }
 }
 
-~Model() {
-    delete[] grid;
+Model::~Model() {
+    delete[] _grid;
 }
 
 Model::Model(const Model& to_copy) {
