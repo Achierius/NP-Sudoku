@@ -32,12 +32,12 @@ public:
    *  if clause is already in clauses_, otherwise
    *  returns true. Does not add duplicate clauses.
    */
-  bool addClause(CNFClause& new_clause);
+  bool addClause(CNFEquation::CNFClause& new_clause);
   /** Removes given clause by checking equality
    *  with every clause in the list and removing the first
    *  clause to match.
    */
-  bool removeClause(CNFClause& old_clause);
+  bool removeClause(CNFEquation::CNFClause& old_clause);
 
   /** Returns the size of clauses_. */
   int numClauses();

@@ -17,6 +17,7 @@ public:
   friend CNFHandler;
 
   CNFEquation();
+  CNFEquation(std::vector<CNFClause> clauses);
 
   CNFEquation(const CNFEquation& to_copy);
   CNFEquation& operator=(const CNFEquation& to_copy);
