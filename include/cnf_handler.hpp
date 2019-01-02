@@ -7,6 +7,7 @@
 #include "cnf_equation.hpp"
 #include "cnf_variable.hpp"
 
+template<class T>
 class CNFHandler {
 public:
   friend CNFEquation;
@@ -52,7 +53,7 @@ public:
 
 private:
   /** Variable wrapped by the handler object. */
-  CNFVariable variable_;
+  CNFVariable<T> variable_;
   /** A (not necessarily complete) list of CNFClauses
    *  containing a pointer to this variable. CNFHandler
    *  is responsible for all clauses in this object.
