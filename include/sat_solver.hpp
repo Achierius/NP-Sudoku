@@ -20,7 +20,7 @@ public:
   void setEquation(std::vector<CNFEquation::CNFClause> clauses);
 
   virtual bool satisfiable() = 0;
-  virtual std::vector<bool> solve() = 0;
+  virtual std::vector<CNFVariable> solve() = 0;
 
 private:
   CNFEquation equation_;
