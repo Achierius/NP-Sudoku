@@ -23,31 +23,71 @@ public:
   CNFEquation& operator=(const CNFEquation& to_copy);
   ~CNFEquation() = default;
 
-  /** Returns the number of clauses in _equation.
+  /** Returns the number of clauses in equation_.
    */
-  int numClauses();
-  /** Returns the number of variables in _variables
-   *  that are active in _equation.
+  int numClauses() const { //TODO 5
+    return equation_.size();
+  }
+  /** Returns the number of variables in variables_
+   *  that are active in equation_.
    */
-  int numVariables();
+  int numVariables() const { //TODO 5
+    return numVariables_;
+  }
   /** Returns a list of variables currently in use. */
-  std::vector<T> getVariables();
+  std::vector<T> getVariables() { //TODO 3
+    std::vector<T> temp;
+    temp.reserve(variables_.size());
+    temp.insert(temp.end(), variables_.begin(), variables_.end());
+    return temp;
+  }
+  /** Returns the number of clauses a given variable
+   *  appears within in equation_.
+   */
+  int variableNum(T identifier) {
+    return variables_[identifier].numClauses();
+  }
 
   /** Returns true if a variable is in use and is determined. */
-  bool hasValue(T varName);
-  /** Returns the value of a variable if hasValue, otherwise false. */
-  bool getVariableValue(T varName);
+  bool hasVariableValue(T identifier) {
+    return hasVariable(identifier) && std::get<0>(variables_[identifier]).determined();
+  }
+  /** Returns the value of a variable if hasValue, otherwise errors */
+  bool getVariableValue(T identifier) {
+    assert(hasVariableValue(identifier));
+    return std::get<0>(variables_[identifier]).getValue();
+  }
   /** Returns true if the variable is in use. */
-  bool isVariable(T varName);
+  bool hasVariable(T varName) {
+    return variableNum(varName) > 0;
+  }
 
-  /** Adds a clause to the end of _equation. */
-  void addClause(CNFClause new_clause);
-  /** Returns the clause at the given index, or an emmpty clause if
-   *  the index is more than numClauses();
+  /** Adds a clause to the end of _equation; returns
+   *  the index of the new clause in the list.
    */
-  CNFClause getClause(int index);
-  /** Removes a clause at the given index, or noops if index>numClauses(). */
-  void removeClause(int index);
+  addClause(CNFClause new_clause) {
+    equation_.push_back(new_clause);
+    return equation_.size() - 1;
+  }
+
+  /** Returns the clause at the given index.
+   *  Must be a valid index.
+   */
+  CNFClause getClause(int index) {
+    assert(index < numClauses());
+    return equation_[index];
+  }
+
+  /** Removes a clause at the given index. index must be < numClauses()*/
+  void removeClause(int index) {
+    assert(index < numClauses());
+    auto itr = equation_.begin();
+    for(int i = index; i > 0; i--) {
+      itr++;
+    }
+    equation.erase(itr);
+  }
+  /**
 
   /** Returns true if:
    *  All variables referenced by the CNFClause have values
@@ -56,14 +96,34 @@ public:
    *  has a value of false.
    *  Otherwise returns false.
    */
-  bool canEvalClause(CNFClause to_eval);
+  bool canEvalClause(const CNFClause& to_eval) {
+    bool ret = true;
+    for(T i : to_eval) {
+      if(hasVariableValue(i)) {
+        if(getVariableValue(i)) {
+          return true;
+        }
+      } else {
+        ret = false;
+      }
+    }
+    return ret;
+  }
   /** Evaluates the value of the given CNFClause by performing
    *  lookups on the CNFVariables within variables_ and
    *  logical or'ing them by eachother. If any has a value of false,
    *  evalClause will return false. If canEvalClause is false,
    *  evalClause will return false.
    */
-  bool evalClause(CNFClause to_eval);
+  bool evalClause(const CNFClause& to_eval) {
+    assert(canEvalClause(to_eval));
+    for(T i : to_eval) {
+      if(!getVariableValue(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 private:
 
@@ -80,18 +140,19 @@ private:
   std::list<CNFClause> equation_;
 
   /** Stores reference data for every possible CNFVariable for
-   *  this equation. If std::get<1> of an entry is false, that
+   *  this equation. If std::get<1> of an entry is 0, that
    *  variable is not present in this equation and the data inside
-   *  the CNFHandler is just a placeholder. All CNFHandlers and
-   *  contained CNFVariables should be initialized at the construction
+   *  the CNFHandler is just a placeholder. Otherwise, it is equal to
+   *  the number of clauses in equation_ that reference it. All CNFHandlers
+   *  and contained CNFVariables should be initialized at the construction
    *  of the CNFEquation. Each CNFHandler contains pointers to every
    *  CNFClause that contains their handled variable; it is the
    *  responsibility of the CNFEquation to keep the CNFHandler's back-
    *  reference list updated as the CNFEquation updates with new clauses.
    *  The index of a given CNFVariable in the array is equal to their
-   *  identifier_ value minus 1.
-   */
-  std::array<std::tuple<CNFHandler, bool>, CNFVariable<T>::NUM_IDENTIFIERS> variables_;
+   *  identifier_ value.
+   *
+  std::array<CNFHandler<T>, CNFVariable<T>::NUM_IDENTIFIERS> variables_;
 
   /** Calculates the number of unique-identifier variables present
    *  in equation_ and assigns that value to numVariables_.
