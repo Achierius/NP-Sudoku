@@ -4,7 +4,7 @@
 template <class T>
 class CNFVariable {
 public:
-  /** Total number of possible identifiers, given a 1 byte char. */
+  /** Total number of possible identifiers, given a numerical type T. */
   const static int NUM_IDENTIFIERS = 2 << (8*sizeof(T) - 1);
 
   /** Object will have identifier_ == 1. */
@@ -93,7 +93,7 @@ public:
   /** Returns identifier. As identifier_ is always stored as a
    *  positive value, a negative value is returned if negated_ is true.
   */
-  signed char getIdentifier() {
+  T getIdentifier() {
     if(negated_) {
       return -identifier_;
     } else {
@@ -113,7 +113,7 @@ public:
   }
 
 private:
-  /** Character representation of this object. */
+  /** Numerical representation of this object. */
   T identifier_;
 
   /** Causes value() to return !value_ if true. */
