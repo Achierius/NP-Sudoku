@@ -75,6 +75,35 @@ public:
     return variable_;
   }
 
+  bool value() {
+    return variable_.value();
+  }
+  void setValue(bool newValue) {
+    variable_.setValue(newValue);
+  }
+  bool determined() {
+    return variable_.determined();
+  }
+  void unset() {
+    variable_.unset();
+  }
+  bool negated() {
+    return variable_.negated();
+  }
+  void setNegate(bool newState) {
+    variable_.setNegate(newState);
+  }
+  void setIdentifier(T newIdentifier) {
+    variable_.setIdentifier(newIdentifier);
+  }
+  T getIdentifier() {
+    return variable_.getIdentifier();
+  }
+  bool printable() {
+    return variable_.printable();
+  }
+
+
 private:
   /** Variable wrapped by the handler object. */
   CNFVariable<T> variable_;
