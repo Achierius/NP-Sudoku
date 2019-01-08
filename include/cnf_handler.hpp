@@ -62,7 +62,7 @@ public:
   }
 
   /** Returns the size of clauses_. */
-  int numClauses() {
+  int numClauses() const {
     return clauses_.size();
   }
 
@@ -71,24 +71,27 @@ public:
     variable_ = new_variable;
   }
   /** Returns a copy of variable_. */
-  CNFVariable<T> getVariable() {
+  CNFVariable<T> getVariable() const {
     return variable_;
   }
 
-  bool value() {
+  bool value() const {
     return variable_.value();
   }
   void setValue(bool newValue) {
     variable_.setValue(newValue);
   }
-  bool determined() {
+  bool determined() const {
     return variable_.determined();
   }
   void unset() {
     variable_.unset();
   }
-  bool negated() {
+  bool negated() const {
     return variable_.negated();
+  }
+  void negate() {
+    variable_.negate();
   }
   void setNegate(bool newState) {
     variable_.setNegate(newState);
@@ -96,10 +99,10 @@ public:
   void setIdentifier(T newIdentifier) {
     variable_.setIdentifier(newIdentifier);
   }
-  T getIdentifier() {
+  T getIdentifier() const {
     return variable_.getIdentifier();
   }
-  bool printable() {
+  bool printable() const {
     return variable_.printable();
   }
 

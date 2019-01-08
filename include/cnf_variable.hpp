@@ -43,7 +43,7 @@ public:
 
   /** Returns value of the object if it contains a valid boolean
    *  value; if !determined(), assertion will fail. If no asserts, return false.. */
-  bool value() {
+  bool value() const {
     assert(determined());
     if(!determined()) {
       return false;
@@ -58,7 +58,7 @@ public:
   }
 
   /** Returns true if this object contains a valid boolean value. */
-  bool determined() {
+  bool determined() const {
     return determined_;
   }
   /** Invalidate the value held by this object and set determined_
@@ -68,7 +68,7 @@ public:
   }
 
   /** Returns the value of negated_. */
-  bool negated() {
+  bool negated() const {
     return negated_;
   }
   /** Set negated_ to equal !negated_. */
@@ -93,7 +93,7 @@ public:
   /** Returns identifier. As identifier_ is always stored as a
    *  positive value, a negative value is returned if negated_ is true.
   */
-  T getIdentifier() {
+  T getIdentifier() const {
     if(negated_) {
       return -identifier_;
     } else {
@@ -103,7 +103,7 @@ public:
   /** Returns true if the identifier casts to a char between 33 and 126 inclusive,
    *  or the corresponding negative values. Excludes all non-printable
    *  chars, as well as +-32 (Space) and +-127 (Delete). */
-  bool printable() {
+  bool printable() const {
     char val = static_cast<T>(identifier_);
     val = val < 0 ? -val : val;
     if(val > 32 && val < 127) {
