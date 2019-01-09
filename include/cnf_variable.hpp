@@ -1,52 +1,60 @@
 #ifndef __NP_SUDOKU_CNF_VARIABLE
 #define __NP_SUDOKU_CNF_VARIABLE
 
+#include <assert.h>
+#include <iostream>
+
 template <class T>
 class CNFVariable {
 public:
   /** Total number of possible identifiers, given a numerical type T. */
-  const static int NUM_IDENTIFIERS = 1 << (8*sizeof(T) - 1);
+  const static unsigned long long NUM_IDENTIFIERS = 1ull << (8*sizeof(T) - 1);
 
   /** Object will have identifier_ == 1. */
   CNFVariable() {
-    determined_ = false;
-    negated_ = false;
-    value_ = false;
-    identifier_ == static_cast<T>(1); //Is this at all reasonable?
+    setValue(false);
+    unset();
+    setIdentifier(static_cast<T>(1));
   }
   CNFVariable(T identifier) {
-    determined_ = false;
-    negated_ = false;
-    value_ = false;
-    identifier_ = identifier;
+    setValue(false);
+    unset();
+    setIdentifier(identifier);
   }
   CNFVariable(T identifier, bool initValue) {
-    determined_ = true;
-    negated_ = false;
-    value_ = initValue;
-    identifier_ = identifier;
+    setValue(initValue);
+    setIdentifier(identifier);
   }
 
   ~CNFVariable() = default;
   CNFVariable(const CNFVariable& to_copy) {
-    determined_ = to_copy.determined_;
-    negated_ = to_copy.negated_;
-    value_ = to_copy.value_;
-    identifier_ = to_copy.ientifier;
+    setValue(to_copy.value_);
+    if(!to_copy.determined_) {
+      unset();
+    }
+    setIdentifier(to_copy.identifier_);
+    setNegated(to_copy.negated());
   }
   CNFVariable& operator=(const CNFVariable& to_copy) {
-    determined_ = to_copy.determined;
-    negated_ = to_copy.negated_;
-    value_ = to_copy.value_;
-    identifier_ = to_copy.identifier_;
+    setValue(to_copy.value_);
+    if(!to_copy.determined_) {
+      unset();
+    }
+    setIdentifier(to_copy.identifier_);
+    setNegated(to_copy.negated());
   }
 
   /** Returns value of the object if it contains a valid boolean
-   *  value; if !determined(), assertion will fail. If no asserts, return false.. */
+   *  value; if !determined(), assertion will fail. If negated(),
+   *  returns !value.
+   */
   bool value() const {
     assert(determined());
     if(!determined()) {
       return false;
+    }
+    if(negated()) {
+      return !value_;
     }
     return value_;
   }
@@ -86,15 +94,17 @@ public:
   void setIdentifier(T identifier) {
     if(identifier < static_cast<T>(0)) {
       identifier_ = -identifier;
+      setNegate(true);
     } else {
-      identifier = identifier;
+      identifier_ = identifier;
+      setNegate(false);
     }
   }
   /** Returns identifier. As identifier_ is always stored as a
    *  positive value, a negative value is returned if negated_ is true.
   */
   T getIdentifier() const {
-    if(negated_) {
+    if(negated()) {
       return -identifier_;
     } else {
       return identifier_;
@@ -105,7 +115,6 @@ public:
    *  chars, as well as +-32 (Space) and +-127 (Delete). */
   bool printable() const {
     char val = static_cast<T>(identifier_);
-    val = val < 0 ? -val : val;
     if(val > 32 && val < 127) {
       return true;
     }
