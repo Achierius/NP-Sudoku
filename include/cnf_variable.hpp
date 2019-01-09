@@ -33,7 +33,7 @@ public:
       unset();
     }
     setIdentifier(to_copy.identifier_);
-    setNegated(to_copy.negated());
+    setNegate(to_copy.negated());
   }
   CNFVariable& operator=(const CNFVariable& to_copy) {
     setValue(to_copy.value_);
@@ -41,7 +41,7 @@ public:
       unset();
     }
     setIdentifier(to_copy.identifier_);
-    setNegated(to_copy.negated());
+    setNegate(to_copy.negated());
   }
 
   /** Returns value of the object if it contains a valid boolean
