@@ -1,9 +1,6 @@
-#include "cnf_handler.hpp"
 #include "cnf_variable.hpp"
-#include "cnf_equation.hpp"
 
 #include <assert.h>
-#include <iostream>
 
 void testVariableNumIdentifiers() {
   assert(CNFVariable<int8_t>::NUM_IDENTIFIERS == 128);
