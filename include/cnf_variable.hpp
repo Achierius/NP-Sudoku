@@ -5,7 +5,7 @@ template <class T>
 class CNFVariable {
 public:
   /** Total number of possible identifiers, given a numerical type T. */
-  const static int NUM_IDENTIFIERS = 2 << (8*sizeof(T) - 1);
+  const static int NUM_IDENTIFIERS = 1 << (8*sizeof(T) - 1);
 
   /** Object will have identifier_ == 1. */
   CNFVariable() {
@@ -38,7 +38,7 @@ public:
     determined_ = to_copy.determined;
     negated_ = to_copy.negated_;
     value_ = to_copy.value_;
-    identifier = to_copy.identifier_;
+    identifier_ = to_copy.identifier_;
   }
 
   /** Returns value of the object if it contains a valid boolean
