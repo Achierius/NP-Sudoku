@@ -1,7 +1,6 @@
 #ifndef __NP_SUDOKU_CNF_EQUATION
 #define __NP_SUDOKU_CNF_EQUATION
 
-#include "cnf_variable.hpp"
 #include "cnf_handler.hpp"
 
 #include <array>
@@ -14,8 +13,6 @@ template <class T>
 class CNFEquation {
 public:
   using CNFClause = std::vector<T>;
-
-  friend CNFHandler;
 
   CNFEquation();
 
@@ -38,8 +35,12 @@ public:
   std::vector<T> getVariables() { //TODO 1
     std::vector<T> temp;
     temp.reserve(variables_.size());
-    for(CNFHandler i : variables_) {
-      if(i.get)
+    for(CNFHandler<T> i : variables_) {
+      if(i.determined()) {
+        if(i.numClauses() > 0) {
+          temp.push_back(i.getIdentifier());
+        }
+      }
     }
     return temp;
   }
@@ -79,7 +80,7 @@ public:
    *  assuming it is present in equation_.
    */
   int clauseIndex(CNFClause clause) const { //TODO 2
-    assert(hasClause(new_clause));
+    assert(hasClause(clause));
     int i = 0;
     for(auto itr = equation_.begin(); itr != equation_.end(); itr++) {
       if(*itr == clause) {
@@ -174,7 +175,7 @@ private:
   }
   void putClause(const CNFClause& clause) { //TODO 2
     for(T i : clause) {
-      variabels_[i].addClause(clause);
+      variables_[i].addClause(clause);
     }
   }
   /** This is a list because we want pointers to members

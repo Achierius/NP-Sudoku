@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 
-#include "cnf_equation.hpp"
 #include "cnf_variable.hpp"
 
 template <class T>
@@ -12,14 +11,12 @@ class CNFHandler {
 public:
   using CNFClause = std::vector<T>;
 
-  friend CNFEquation;
-
   /** Creates a handler with a default-constructed
    *  CNFVariable.
    */
   CNFHandler() { }
 
-  CNFHandler(CNFVariable variable) {
+  CNFHandler(CNFVariable<T> variable) {
     variable_ = variable;
   }
 
@@ -28,8 +25,8 @@ public:
    *  only supposed to be one CNFHandler per CNFEquation --
    *  copying them makes no sense!
    */
-  CNFHandler(const CNFHandler& to_copy) = delete;
-  CNFHandler& operator=(const CNFHandler& to_copy) = delete;
+  CNFHandler(const CNFHandler<T>& to_copy) = delete;
+  CNFHandler& operator=(const CNFHandler<T> & to_copy) = delete;
   ~CNFHandler() = default;
 
   //TODO: Move semantics
@@ -41,11 +38,11 @@ public:
    */
   bool addClause(CNFClause& new_clause) {
     for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
-      if((**itr) == (*old_clause)) {
+      if((**itr) == (*new_clause)) {
         return false;
       }
     }
-    clauses_.push_back(make_shared<CNFClause>(new_clause));
+    clauses_.push_back(std::make_shared<CNFClause>(new_clause));
     return true;
   }
   /** Removes given clause by checking equality
@@ -56,9 +53,10 @@ public:
     for(auto itr = clauses_.begin(); itr != clauses_.end(); itr++) {
       if((**itr) == (*old_clause)) {
         clauses_.erase(itr);
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   /** Returns the size of clauses_. */
@@ -67,7 +65,7 @@ public:
   }
 
   /** Sets variable_ to new_variable. */
-  void setVariable(CNFVariable new_variable) {
+  void setVariable(CNFVariable<T> new_variable) {
     variable_ = new_variable;
   }
   /** Returns a copy of variable_. */
