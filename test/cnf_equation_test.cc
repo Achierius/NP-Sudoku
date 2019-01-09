@@ -69,6 +69,24 @@ void testVariableValues() {
   assert(mem.determined() == false);
 }
 
+void testVariableCopy() {
+  CNFVariable<short> v1;
+  CNFVariable<short> v2;
+  v1.setValue(true);
+  v1.setIdentifier(4);
+  v2.setIdentifier(15);
+  v2.negate();
+  CNFVariable<short> v3(v1);
+  CNFVariable<short> v4; v4 = v2;
+  assert(v3.determined() == true);
+  assert(v3.value() == true);
+  assert(v3.getIdentifier() == 4);
+  assert(v3.negated() == false);
+  assert(v4.determined() == false);
+  assert(v4.getIdentifier() == -15);
+  assert(v4.negated() == true);
+}
+
 int main() {
   testVariableNumIdentifiers();
   testVariableConstruct();
