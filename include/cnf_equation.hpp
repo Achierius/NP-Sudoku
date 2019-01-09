@@ -35,37 +35,70 @@ public:
     return numVariables_;
   }
   /** Returns a list of variables currently in use. */
-  std::vector<T> getVariables() { //TODO 3
+  std::vector<T> getVariables() { //TODO 1
     std::vector<T> temp;
     temp.reserve(variables_.size());
-    temp.insert(temp.end(), variables_.begin(), variables_.end());
+    for(CNFHandler i : variables_) {
+      if(i.get)
+    }
     return temp;
   }
   /** Returns the number of clauses a given variable
    *  appears within in equation_.
    */
-  int variableNum(T identifier) {
+  int variableNum(T identifier) { //TODO 3
     return variables_[identifier].numClauses();
   }
 
   /** Returns true if a variable is in use and is determined. */
-  bool hasVariableValue(T identifier) {
-    return hasVariable(identifier) && std::get<0>(variables_[identifier]).determined();
+  bool hasVariableValue(T identifier) const { //TODO 3
+    return hasVariable(identifier) && variables_[identifier].determined();
   }
   /** Returns the value of a variable if hasValue, otherwise errors */
-  bool getVariableValue(T identifier) {
+  bool getVariableValue(T identifier) const { //TODO 3
     assert(hasVariableValue(identifier));
-    return std::get<0>(variables_[identifier]).getValue();
+    return variables_[identifier].getValue();
   }
   /** Returns true if the variable is in use. */
-  bool hasVariable(T varName) {
+  bool hasVariable(T varName) const { //TODO 5
     return variableNum(varName) > 0;
   }
 
-  /** Adds a clause to the end of _equation; returns
-   *  the index of the new clause in the list.
+  /** Returns true if the given CNFClause
+   *  exists within clauses_.
    */
-  addClause(CNFClause new_clause) {
+  bool hasClause(CNFClause clause) const { //TODO 3
+    for(CNFClause i : equation_) {
+      if(i == clause) {
+        return true;
+      }
+    }
+  }
+
+  /** Returns the index of the given clause,
+   *  assuming it is present in equation_.
+   */
+  int clauseIndex(CNFClause clause) const { //TODO 2
+    assert(hasClause(new_clause));
+    int i = 0;
+    for(auto itr = equation_.begin(); itr != equation_.end(); itr++) {
+      if(*itr == clause) {
+        return i;
+      }
+      i++;
+    }
+    return i;
+  }
+  /** Adds a clause to the end of _equation; returns
+   *  the index of the new clause in the list. If the
+   *  clause already exists, returns the index of the
+   *  clauses' location within the list and does not
+   *  add an additional copy.
+   */
+  int addClause(CNFClause new_clause) const { //TODO 3
+    if(hasClause(new_clause)) {
+      return clauseIndex(new_clause);
+    }
     equation_.push_back(new_clause);
     return equation_.size() - 1;
   }
@@ -73,21 +106,27 @@ public:
   /** Returns the clause at the given index.
    *  Must be a valid index.
    */
-  CNFClause getClause(int index) {
+  CNFClause getClause(int index) const { //TODO 3
     assert(index < numClauses());
     return equation_[index];
   }
 
   /** Removes a clause at the given index. index must be < numClauses()*/
-  void removeClause(int index) {
+  void removeClause(int index) { //TODO 2
     assert(index < numClauses());
     auto itr = equation_.begin();
     for(int i = index; i > 0; i--) {
       itr++;
     }
-    equation.erase(itr);
+    dropClause(*itr);
+    equation_.erase(*itr);
   }
-  /**
+
+  /** Removes a given clause from the list. */
+  void removeClause(const CNFClause& clause) { //TODO 3
+    dropClause(clause);
+    equation_.remove(clause);
+  }
 
   /** Returns true if:
    *  All variables referenced by the CNFClause have values
@@ -96,7 +135,7 @@ public:
    *  has a value of false.
    *  Otherwise returns false.
    */
-  bool canEvalClause(const CNFClause& to_eval) {
+  bool canEvalClause(const CNFClause& to_eval) { //TODO 3
     bool ret = true;
     for(T i : to_eval) {
       if(hasVariableValue(i)) {
@@ -109,13 +148,14 @@ public:
     }
     return ret;
   }
+
   /** Evaluates the value of the given CNFClause by performing
    *  lookups on the CNFVariables within variables_ and
    *  logical or'ing them by eachother. If any has a value of false,
    *  evalClause will return false. If canEvalClause is false,
    *  evalClause will return false.
    */
-  bool evalClause(const CNFClause& to_eval) {
+  bool evalClause(const CNFClause& to_eval) { //TODO 3
     assert(canEvalClause(to_eval));
     for(T i : to_eval) {
       if(!getVariableValue(i)) {
@@ -127,6 +167,16 @@ public:
 
 private:
 
+  void dropClause(const CNFClause& clause) { //TODO 2
+    for(T i : clause) {
+      variables_[i].removeClause(clause);
+    }
+  }
+  void putClause(const CNFClause& clause) { //TODO 2
+    for(T i : clause) {
+      variabels_[i].addClause(clause);
+    }
+  }
   /** This is a list because we want pointers to members
    *  of this container to remain valid after a resize.
    *  Access should not actually be done through the list's
@@ -151,7 +201,7 @@ private:
    *  reference list updated as the CNFEquation updates with new clauses.
    *  The index of a given CNFVariable in the array is equal to their
    *  identifier_ value.
-   *
+   */
   std::array<CNFHandler<T>, CNFVariable<T>::NUM_IDENTIFIERS> variables_;
 
   /** Calculates the number of unique-identifier variables present
