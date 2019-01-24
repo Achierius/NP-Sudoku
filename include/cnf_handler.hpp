@@ -7,7 +7,7 @@
 #include "cnf_variable.hpp"
 
 template <class T>
-class CNFHandler {
+class CNFHandler : public CNFVariable {
 public:
   using CNFClause = std::vector<T>;
 
@@ -15,10 +15,17 @@ public:
    *  CNFVariable.
    */
   CNFHandler() { }
-
-  CNFHandler(CNFVariable<T> variable) {
-    variable_ = variable;
+  CNFHandler(const CNFVariable& to_init) : CNFVariable(to_init) {}
+  CNFHandler(const CNFVariable& to_init, const std::vector<std::shared_ptr<CNFClause> >& to_ref) : CNFVariable(to_init) {
+    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_ref);
   }
+  CNFHandler(const CNFHandler& to_copy) : CNFVariable(to_copy) {
+    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_init.clauses_);
+  }
+  CNFVariable& operator=(const CNFHandler& to_copy) : CNFVariable(to_copy) {
+    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_init.clauses_);
+  }
+  ~CNFHandler() = default;
 
   /** Each handler is supposed to keep a list of clauses
    *  pointing at this specific CNFVariable, and there's
@@ -59,55 +66,7 @@ public:
     return false;
   }
 
-  /** Returns the size of clauses_. */
-  int numClauses() const {
-    return clauses_.size();
-  }
-
-  /** Sets variable_ to new_variable. */
-  void setVariable(CNFVariable<T> new_variable) {
-    variable_ = new_variable;
-  }
-  /** Returns a copy of variable_. */
-  CNFVariable<T> getVariable() const {
-    return variable_;
-  }
-
-  bool value() const {
-    return variable_.value();
-  }
-  void setValue(bool newValue) {
-    variable_.setValue(newValue);
-  }
-  bool determined() const {
-    return variable_.determined();
-  }
-  void unset() {
-    variable_.unset();
-  }
-  bool negated() const {
-    return variable_.negated();
-  }
-  void negate() {
-    variable_.negate();
-  }
-  void setNegate(bool newState) {
-    variable_.setNegate(newState);
-  }
-  void setIdentifier(T newIdentifier) {
-    variable_.setIdentifier(newIdentifier);
-  }
-  T getIdentifier() const {
-    return variable_.getIdentifier();
-  }
-  bool printable() const {
-    return variable_.printable();
-  }
-
-
 private:
-  /** Variable wrapped by the handler object. */
-  CNFVariable<T> variable_;
   /** A (not necessarily complete) list of CNFClauses
    *  containing a pointer to this variable. CNFHandler
    *  is responsible for all clauses in this object.
