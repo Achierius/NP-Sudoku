@@ -14,15 +14,18 @@ class CNFEquation {
 public:
   using CNFClause = std::vector<T>;
 
-  CNFEquation() {
+  CNFEquation() : equation_(), variables_(), numVariables_(0) {
 
   }
 
-  CNFEquation(const CNFEquation& to_copy) {
+  CNFEquation(const CNFEquation& to_copy) : equation_(to_copy), variables_(to_copy.variables_), numVariables_(to_copy.numVariables_) {
 
   }
+
   CNFEquation& operator=(const CNFEquation& to_copy) {
-    
+    numVariables_ = to_copy.numVariables_;
+    equation_ = to_copy.equation_;
+    variables_ = to_copy.variables;
   }
   ~CNFEquation() = default;
 
@@ -173,7 +176,6 @@ public:
   }
 
 private:
-
   void dropClause(const CNFClause& clause) { //TODO 2
     for(T i : clause) {
       variables_[i].removeClause(clause);
@@ -184,6 +186,7 @@ private:
       variables_[i].addClause(clause);
     }
   }
+
   /** This is a list because we want pointers to members
    *  of this container to remain valid after a resize.
    *  Access should not actually be done through the list's
