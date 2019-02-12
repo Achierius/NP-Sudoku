@@ -2,7 +2,6 @@
 #define __NP_SUDOKU_CNF_VARIABLE
 
 #include <assert.h>
-#include <iostream>
 
 template <class T>
 class CNFVariable {

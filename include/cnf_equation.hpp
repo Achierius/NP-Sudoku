@@ -14,10 +14,16 @@ class CNFEquation {
 public:
   using CNFClause = std::vector<T>;
 
-  CNFEquation();
+  CNFEquation() {
 
-  CNFEquation(const CNFEquation& to_copy);
-  CNFEquation& operator=(const CNFEquation& to_copy);
+  }
+
+  CNFEquation(const CNFEquation& to_copy) {
+
+  }
+  CNFEquation& operator=(const CNFEquation& to_copy) {
+    
+  }
   ~CNFEquation() = default;
 
   /** Returns the number of clauses in equation_.

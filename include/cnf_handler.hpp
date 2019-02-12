@@ -7,7 +7,7 @@
 #include "cnf_variable.hpp"
 
 template <class T>
-class CNFHandler : public CNFVariable {
+class CNFHandler : public CNFVariable<T> {
 public:
   using CNFClause = std::vector<T>;
 
@@ -15,25 +15,17 @@ public:
    *  CNFVariable.
    */
   CNFHandler() { }
-  CNFHandler(const CNFVariable& to_init) : CNFVariable(to_init) {}
-  CNFHandler(const CNFVariable& to_init, const std::vector<std::shared_ptr<CNFClause> >& to_ref) : CNFVariable(to_init) {
+  CNFHandler(const CNFVariable<T>& to_init) : CNFVariable<T>(to_init) {}
+  CNFHandler(const CNFVariable<T>& to_init, const std::vector<std::shared_ptr<CNFClause> >& to_ref) : CNFVariable<T>(to_init) {
     clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_ref);
   }
-  CNFHandler(const CNFHandler& to_copy) : CNFVariable(to_copy) {
-    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_init.clauses_);
+  CNFHandler(const CNFHandler<T>& to_copy) : CNFVariable<T>(to_copy) {
+    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_copy.clauses_);
   }
-  CNFVariable& operator=(const CNFHandler& to_copy) : CNFVariable(to_copy) {
-    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_init.clauses_);
+  CNFVariable<T>& operator=(const CNFHandler<T>& to_copy){
+    CNFVariable<T>::operator=(to_copy);
+    clauses_ = std::vector<std::shared_ptr<CNFClause> >(to_copy.clauses_);
   }
-  ~CNFHandler() = default;
-
-  /** Each handler is supposed to keep a list of clauses
-   *  pointing at this specific CNFVariable, and there's
-   *  only supposed to be one CNFHandler per CNFEquation --
-   *  copying them makes no sense!
-   */
-  CNFHandler(const CNFHandler<T>& to_copy) = delete;
-  CNFHandler& operator=(const CNFHandler<T> & to_copy) = delete;
   ~CNFHandler() = default;
 
   //TODO: Move semantics
