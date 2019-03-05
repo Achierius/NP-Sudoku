@@ -38,7 +38,7 @@ public:
   void addClause(const clause_t& new_clause);
   void removeClause(const clause_t& clause_to_delete);
 
-  std::vector<std::shared_ptr<clause_t> > varClauses(variable_t variable);
+  std::vector<std::shared_ptr<const clause_t> > varClauses(variable_t variable);
 
 private:
   void reparseCReferences(); //Recalculates all vectors of shared_ptr<snf_clause_t> in variables_
