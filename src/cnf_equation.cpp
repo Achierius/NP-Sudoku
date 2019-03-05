@@ -22,13 +22,15 @@ CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses,
 }
 
 void CNFEquation::setVariable(variable_t variable, value_t new_val) {
-
+  variables_[variable] = new_val;
 }
 void CNFEquation::setRange(variable_t min, variable_t max, value_t new_val) {
-
+  for(variable_t i : {min, max}) {
+    setVariable(i, new_val);
+  }
 }
 void CNFEquation::setAll(value_t new_val) {
-
+  setRange(CNF_MIN, CNF_MAX, new_val);
 }
 
 CNFEquation::value_t CNFEquation::getVariable(variable_t variable) const {
