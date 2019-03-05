@@ -34,7 +34,7 @@ void CNFEquation::setAll(value_t new_val) {
 }
 
 CNFEquation::value_t CNFEquation::getVariable(variable_t variable) const {
-
+  return variables_[variable];
 }
 
 void CNFEquation::addClause(const clause_t& new_clause) {
