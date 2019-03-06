@@ -45,8 +45,8 @@ private:
   void reparseMaxVariable(); //Recalculates the correct value of max_variable
 
   std::list<std::shared_ptr<clause_t> > clauses_;
-  std::array<value_t, CNF_MAX> variables_;
-  std::array<std::vector<std::shared_ptr<clause_t> >, CNF_MAX> references_;
+  std::array<value_t, CNF_MAX+1> variables_;
+  std::array<std::vector<std::shared_ptr<clause_t> >, CNF_MAX+1> references_;
   variable_t max_variable;
 };
 
