@@ -2,15 +2,34 @@
 #include <algorithm>
 
 CNFEquation::CNFEquation() {
-
+  max_variable = -1;
+  for(auto i : variables_) {
+    i.reset();
+  }
 }
 
-CNFEquation::CNFEquation(const CNFEquation& to_copy) {
-
+CNFEquation::CNFEquation(const CNFEquation& to_copy){
+  for(auto i : {CNF_MIN, CNF_MAX}) {
+    variables_[i] = to_copy.variables_[i];
+  }
+  for(auto i : to_copy.clauses_) {
+    clauses_.push_back(i);
+  }
+  reparseCReferences();
+  reparseMaxVariable();
 }
+
 CNFEquation& CNFEquation::operator=(const CNFEquation& to_copy) {
-
+  for(auto i : {CNF_MIN, CNF_MAX}) {
+    variables_[i] = to_copy.variables_[i];
+  }
+  for(auto i : to_copy.clauses_) {
+    clauses_.push_back(i);
+  }
+  reparseCReferences();
+  reparseMaxVariable();
 }
+
 CNFEquation::~CNFEquation() = default;
 
 CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses) {
