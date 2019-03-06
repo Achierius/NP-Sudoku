@@ -93,3 +93,11 @@ void CNFEquation::reparseMaxVariable() {
     }
   }
 }
+
+void CNFEquation::reparseCReferences() {
+  for(std::shared_ptr<clause_t> itr : clauses_) {
+    for(auto num : *itr) {
+      references_[num.first].push_back(itr);
+    }
+  }
+}
