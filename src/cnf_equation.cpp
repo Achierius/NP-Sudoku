@@ -52,8 +52,9 @@ void CNFEquation::removeClause(const clause_t& clause_to_delete) {
     }
   }
   for(auto i : clause_to_delete) {
-    references_[i.first].erase(std::remove_if(references_.begin(), references_.end(),
-                   [=](std::shared_ptr<clause_t> arg){return *arg == clause_to_delete;}));
+    (references_[i.first]).erase(std::remove_if(references_[i.first].begin(), references_[i.first].end(),
+                                 [=](std::shared_ptr<clause_t> arg){return *arg == clause_to_delete;}),
+                                 references_[i.first].end());
     if(i.first == maxVariable() && references_[i.first].size() == 0) {
       reparseMaxVariable();
     }
