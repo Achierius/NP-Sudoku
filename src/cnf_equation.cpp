@@ -18,7 +18,7 @@ CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses) {
 }
 
 CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses,
-            std::initializer_list<value_t>) {
+                         const std::initializer_list<value_t>& variables) {
 
 }
 
