@@ -23,10 +23,6 @@ public:
   CNFEquation& CNFEquation::operator=(const CNFEquation& to_copy);
   ~CNFEquation();
 
-  CNFEquation(const std::initializer_list<clause_t>& clauses);
-  CNFEquation(const std::initializer_list<clause_t>& clauses,
-              const std::initializer_list<value_t>& varaibles); //TODO: Make sure you correctly parse the variable's clauses
-
   void setVariable(variable_t variable, value_t new_value);
   void setRange(variable_t min, variable_t max, value_t new_value); //Min and max inclusive
   void setAll(value_t new_value);

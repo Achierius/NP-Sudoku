@@ -32,15 +32,6 @@ CNFEquation& CNFEquation::operator=(const CNFEquation& to_copy) {
 
 CNFEquation::~CNFEquation() = default;
 
-CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses) {
-
-}
-
-CNFEquation::CNFEquation(const std::initializer_list<clause_t>& clauses,
-                         const std::initializer_list<value_t>& variables) {
-
-}
-
 void CNFEquation::setVariable(variable_t variable, value_t new_val) {
   variables_[variable] = new_val;
 }
