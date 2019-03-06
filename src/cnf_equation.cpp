@@ -80,8 +80,8 @@ void CNFEquation::removeClause(const clause_t& clause_to_delete) {
   }
 }
 
-std::vector<std::shared_ptr<const CNFEquation::clause_t> > CNFEquation::varClauses(variable_t variable) {
-
+const std::vector<std::shared_ptr<CNFEquation::clause_t> > CNFEquation::varClauses(variable_t variable) {
+  return references_[variable];
 }
 
 void CNFEquation::reparseMaxVariable() {
