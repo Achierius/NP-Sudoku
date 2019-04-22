@@ -57,30 +57,30 @@ void Model::set(int index, int value) {
     _grid[index] = value;
 }
 
-Model::Node Model::value(int region, int row, int col) {
+Model::Node Model::value(int region, int row, int col) const {
     return value(getIndex(region, row, col));
 }
 
-Model::Node Model::value(int row, int col) {
+Model::Node Model::value(int row, int col) const {
     return value(getIndex(row, col));
 }
 
-Model::Node Model::value(int index) {
+Model::Node Model::value(int index) const {
     assert(index >= 0 && index < ROWS*COLS);
 
     return _grid[index].value();
 }
 
-int Model::getIndex(int region, int row, int col) {
+int Model::getIndex(int region, int row, int col) const {
     return getIndex(row + ((ROWS / REGIONS_PER_SIDE) * (region / REGIONS_PER_SIDE)),
                     col + ((COLS / REGIONS_PER_SIDE) * (region % REGIONS_PER_SIDE)));
 }
 
-int Model::getIndex(int row, int col) {
+int Model::getIndex(int row, int col) const {
     return col + (ROWS * row);
 }
 
-bool Model::determined() {
+bool Model::determined() const {
     for(int i = 0; i < ROWS*COLS; i++) {
         if(!_grid[i]) {
             return false;

@@ -32,14 +32,14 @@ public:
     void set(int row, int col, int value);
     void set(int index, int value);
 
-    Node value(int region, int row, int col);
-    Node value(int row, int col);
-    Node value(int index);
+    Node value(int region, int row, int col) const;
+    Node value(int row, int col) const;
+    Node value(int index) const;
 
-    bool determined();
+    bool determined() const;
 private:
-    int getIndex(int region, int row, int col);
-    int getIndex(int row, int col);
+    int getIndex(int region, int row, int col) const;
+    int getIndex(int row, int col) const;
 
     Grid _grid;
 };
