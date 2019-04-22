@@ -2,7 +2,7 @@
 #include <algorithm>
 
 CNFEquation::CNFEquation() {
-  max_variable = -1;
+  max_variable_ = -1;
   for(auto i : variables_) {
     i.reset();
   }
@@ -48,6 +48,14 @@ CNFEquation::value_t CNFEquation::getVariable(variable_t variable) const {
   return variables_[variable];
 }
 
+std::pair<CNFEquation::variable_t, bool> CNFEquation::makePair(variable_t variable, bool negated) const {
+  return std::make_pair<variable_t, bool>(variable, negated);
+}
+
+void CNFEquation::addPair(variable_t variable, bool negated) {
+  addClause(clause_t(makePair(variable, negated)));
+}
+
 void CNFEquation::addClause(const clause_t& new_clause) {
   clauses_.push_back(std::make_shared<clause_t>(new_clause));
   for(auto i : new_clause) {
@@ -71,15 +79,19 @@ void CNFEquation::removeClause(const clause_t& clause_to_delete) {
   }
 }
 
+CNFEquation::variable_t CNFEquation::maxVariable() const {
+  return max_variable_;
+}
+
 const std::vector<std::shared_ptr<CNFEquation::clause_t> > CNFEquation::varClauses(variable_t variable) {
   return references_[variable];
 }
 
 void CNFEquation::reparseMaxVariable() {
-  max_variable = -1;
+  max_variable_ = -1;
   for(int i = CNF_MAX; i >= CNF_MIN; i--) {
     if(references_[i].size() > 0) {
-      max_variable = i;
+      max_variable_ = i;
       return;
     }
   }

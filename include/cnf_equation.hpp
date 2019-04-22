@@ -14,7 +14,7 @@ class CNFEquation {
 public:
   using value_t                   = std::optional<bool>;
   using variable_t                = uint64_t;
-  using clause_t = std::vector<const std::pair<variable_t, bool> >;
+  using clause_t                  = std::vector<const std::pair<variable_t, bool> >;
   const static variable_t CNF_MAX = UINT64_MAX;
   const static variable_t CNF_MIN = 0;
 
@@ -29,8 +29,10 @@ public:
 
   value_t getVariable(variable_t variable) const;
 
-  variable_t maxVariable(); //Returns the index of the maximum variable currently included in a clause in clauses_
+  variable_t maxVariable() const; //Returns the index of the maximum variable currently included in a clause in clauses_
 
+  std::pair<variable_t, bool> makePair(variable_t variable, bool negated) const;
+  void addPair(variable_t, bool);
   void addClause(const clause_t& new_clause);
   void removeClause(const clause_t& clause_to_delete);
 
@@ -43,7 +45,7 @@ private:
   std::list<std::shared_ptr<clause_t> > clauses_;
   std::array<value_t, CNF_MAX+1> variables_;
   std::array<std::vector<std::shared_ptr<clause_t> >, CNF_MAX+1> references_;
-  variable_t max_variable;
+  variable_t max_variable_;
 };
 
 #endif//__NP_SUDOKU_CNF_EQUATION_H
