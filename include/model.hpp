@@ -10,6 +10,7 @@ public:
     static const int REGIONS_PER_SIDE = 3;
     static const int ROWS = 9;
     static const int COLS = 9;
+    static const int IMAX = 9;
     static const int REGION_COLS = COLS/REGIONS_PER_SIDE;
     static const int REGION_ROWS = ROWS/REGIONS_PER_SIDE;
 
