@@ -14,13 +14,13 @@ class CNFEquation {
 public:
   using value_t                   = std::optional<bool>;
   using variable_t                = uint64_t;
-  using clause_t                  = std::vector<const std::pair<variable_t, bool> >;
+  using clause_t                  = std::vector<std::pair<variable_t, bool> >;
   const static variable_t CNF_MAX = UINT64_MAX;
   const static variable_t CNF_MIN = 0;
 
   CNFEquation();
   CNFEquation(const CNFEquation& to_copy);
-  CNFEquation& CNFEquation::operator=(const CNFEquation& to_copy);
+  CNFEquation& operator=(const CNFEquation& to_copy);
   ~CNFEquation();
 
   void setVariable(variable_t variable, value_t new_value);
@@ -31,8 +31,8 @@ public:
 
   variable_t maxVariable() const; //Returns the index of the maximum variable currently included in a clause in clauses_
 
-  std::pair<variable_t, bool> makePair(variable_t variable, bool negated) const;
-  void addPair(variable_t, bool);
+  static std::pair<variable_t, bool> makePair(variable_t variable, bool negated);
+  void addVariable(variable_t, bool);
   void addClause(const clause_t& new_clause);
   void removeClause(const clause_t& clause_to_delete);
 
