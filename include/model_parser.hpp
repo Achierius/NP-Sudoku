@@ -6,9 +6,9 @@
 
 int variableID(int i, int j, int k);
 
-Model& parseEqns(const CNFEquation& eqn);
+Model parseEqns(const CNFEquation& eqn);
 
-CNFEquation& parseModel(const Model& model);
+CNFEquation parseModel(const Model& model);
 
 bool verifyEqn(const CNFEquation& eqn);
 

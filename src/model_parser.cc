@@ -1,4 +1,5 @@
 #include "model_parser.hpp"
+#include "cnf_equation.hpp"
 
 #include <vector>
 #include <optional>
@@ -7,7 +8,7 @@ int variableID(int i, int j, int k) {
     return j + 9*i + 81*(k-1);
 }
 
-CNFEquation& parseModel(const Model& model) {
+CNFEquation parseModel(const Model& model) {
     //There are ROWS*ROWS*ROWS variables. We will enumerate them as follows:
     //i, j -- rows, cols respectively. k: 'number' variable, from 1-9.
     //Variable index = j + 9i + 81*(k-1)
@@ -26,16 +27,16 @@ CNFEquation& parseModel(const Model& model) {
         for (int j = 0; j < Model::COLS; j++) {
             if (model.value(i, j)) {    //Fixed number at cell in board
                 eqn.addVariable(variableID(i, j, model.value(i, j).value()), false);
-            } else {                    //Undefined cell
-                for (int k1 = 1; k1 <= Model::IMAX; k1++) {
-                    for (int k2 = k1 + 1; k2 <= Model::IMAX; k2++) {  //Starts at k1 + 1 to avoid duplicate pairs
-                        CNFEquation::clause_t clause;
-                        //At most one of these two variables can be true! If both are, there are two numbers in the cell.
-                        //Thus, the clause is the disjunction of the two variables.
-                        clause.push_back(CNFEquation::makePair(variableID(i, j, k1), false));
-                        clause.push_back(CNFEquation::makePair(variableID(i, j, k2), false));
-                        eqn.addClause(clause);
-                    }
+            }
+            //Treat all cells as Undefined cells
+            for (int k1 = 1; k1 <= Model::IMAX; k1++) {
+                for (int k2 = k1 + 1; k2 <= Model::IMAX; k2++) {  //Starts at k1 + 1 to avoid duplicate pairs
+                    CNFEquation::clause_t clause;
+                    //At most one of these two variables can be true! If both are, there are two numbers in the cell.
+                    //Thus, the clause is the disjunction of the two variables.
+                    clause.push_back(CNFEquation::makePair(variableID(i, j, k1), false));
+                    clause.push_back(CNFEquation::makePair(variableID(i, j, k2), false));
+                    eqn.addClause(clause);
                 }
             }
         }
