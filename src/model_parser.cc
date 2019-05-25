@@ -139,6 +139,8 @@ CNFEquation& parseModel(const Model& model) {
         }
         eqn.addClause(clause);
     }
+
+    return eqn;
 }
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
