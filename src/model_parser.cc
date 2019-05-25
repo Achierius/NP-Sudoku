@@ -58,12 +58,21 @@ CNFEquation& parseModel(const Model& model) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i1, j, k), false));
                     clause.push_back(CNFEquation::makePair(variableID(i2, j, k), false));
+                    eqn.addClause(clause);
                 }
             }
         }
     }
     //4. Each row must have at least 1 of every number
-
+    for (int j = 0; j < Model::COLS; j++) {
+        for (int k = 0; k <= Model::IMAX; k++) {
+            CNFEquation::clause_t clause;
+            for (int i = 0; i < Model::ROWS; i++) {
+                clause.push_back(CNFEquation::makePair(variableID(i, j, k), true));
+            }
+            eqn.addClause(clause);
+        }
+    }
     //5. Each column must have at most 1 of every number
     for (int i = 0; i < Model::ROWS; i++) {
         for (int k = 0; k <= Model::IMAX; k++) {
@@ -72,12 +81,21 @@ CNFEquation& parseModel(const Model& model) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i, j1, k), false));
                     clause.push_back(CNFEquation::makePair(variableID(i, j2, k), false));
+                    eqn.addClause(clause);
                 }
             }
         }
     }
     //6. Each column must have at least 1 of every number
-    for ()
+    for (int i = 0; i < Model::ROWS; i++) {
+        for (int k = 0; k <= Model::IMAX; k++) {
+            CNFEquation::clause_t clause;
+            for (int j = 0; j < Model::COLS; j++) {
+                clause.push_back(CNFEquation::makePair(variableID(i, j, k), true));
+            }
+            eqn.addClause(clause);
+        }
+    }
 }
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
