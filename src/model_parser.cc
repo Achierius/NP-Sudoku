@@ -32,23 +32,52 @@ CNFEquation& parseModel(const Model& model) {
                         CNFEquation::clause_t clause;
                         //At most one of these two variables can be true! If both are, there are two numbers in the cell.
                         //Thus, the clause is the disjunction of the two variables.
-                        clause.push_back(CNFEquation::makePair(variableID(i, j, k1), true));
-                        clause.push_back(CNFEquation::makePair(variableID(i, j, k2), true));
+                        clause.push_back(CNFEquation::makePair(variableID(i, j, k1), false));
+                        clause.push_back(CNFEquation::makePair(variableID(i, j, k2), false));
                         eqn.addClause(clause);
                     }
                 }
             }
         }
     }
+    //2. Every cell must have at least 1 number
     for (int i = 0; i < Model::ROWS; i++) {
         for (int j = 0; j < Model::COLS; j++) {
             CNFEquation::clause_t clause;
-            for (int k = 1; k < Model::COLS; k++) {
+            for (int k = 1; k <= Model::IMAX; k++) {
                 clause.push_back(CNFEquation::makePair(variableID(i, j, k), true));
             }
             eqn.addClause(clause);
         }
     }
+    //3. Each row must have at most 1 of every number
+    for (int j = 0; j < Model::COLS; j++) {
+        for (int k = 0; k <= Model::IMAX; k++) {
+            for (int i1 = 0; i1 < Model::ROWS; i1++){
+                for (int i2 = 0; i2 < Model::ROWS; i2++) {
+                    CNFEquation::clause_t clause;
+                    clause.push_back(CNFEquation::makePair(variableID(i1, j, k), false));
+                    clause.push_back(CNFEquation::makePair(variableID(i2, j, k), false));
+                }
+            }
+        }
+    }
+    //4. Each row must have at least 1 of every number
+
+    //5. Each column must have at most 1 of every number
+    for (int i = 0; i < Model::ROWS; i++) {
+        for (int k = 0; k <= Model::IMAX; k++) {
+            for (int j1 = 0; j1 < Model::COLS; j1++){
+                for (int j2 = 0; j2 < Model::COLS; j2++) {
+                    CNFEquation::clause_t clause;
+                    clause.push_back(CNFEquation::makePair(variableID(i, j1, k), false));
+                    clause.push_back(CNFEquation::makePair(variableID(i, j2, k), false));
+                }
+            }
+        }
+    }
+    //6. Each column must have at least 1 of every number
+    for ()
 }
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
