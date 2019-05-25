@@ -36,6 +36,8 @@ public:
   void addClause(const clause_t& new_clause);
   void removeClause(const clause_t& clause_to_delete);
 
+  int numClauses();
+  const std::list<std::shared_ptr<clause_t> > allClauses();
   const std::vector<std::shared_ptr<clause_t> > varClauses(variable_t variable);
 
 private:

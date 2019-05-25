@@ -90,6 +90,14 @@ const std::vector<std::shared_ptr<CNFEquation::clause_t> > CNFEquation::varClaus
   return references_[variable];
 }
 
+const std::list<std::shared_ptr<CNFEquation::clause_t> > CNFEquation::allClauses() {
+  return clauses_;
+}
+
+int CNFEquation::numClauses() {
+  return clauses_.size();
+}
+
 void CNFEquation::reparseMaxVariable() {
   max_variable_ = -1;
   for(variable_t i = CNF_MAX; i >= CNF_MIN; i--) {
