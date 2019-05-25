@@ -2,13 +2,15 @@
 #define __NP_SUDOKU_MODEL_PARSER
 
 #include "model.hpp"
-#include "clause.hpp"
+#include "cnf_equation.hpp"
 
-Model parseEqns(const Clause& eqns);
+int variableID(int i, int j, int k);
 
-Clause& parseModel(const Model& model);
+Model& parseEqns(const CNFEquation& eqn);
 
-bool verifyEqns(const Clause& eqns);
+CNFEquation& parseModel(const Model& model);
+
+bool verifyEqn(const CNFEquation& eqn);
 
 bool verifyModel(const Model& model);
 
