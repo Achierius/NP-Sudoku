@@ -27,8 +27,8 @@ CNFEquation& parseModel(const Model& model) {
             if (model.value(i, j)) {    //Fixed number at cell in board
                 eqn.addVariable(variableID(i, j, model.value(i, j).value()), false);
             } else {                    //Undefined cell
-                for (int k1 = 1; k1 <= 9; k1++) {
-                    for (int k2 = k1 + 1; k2 <= 9; k2++) {  //Starts at k1 + 1 to avoid duplicate pairs
+                for (int k1 = 1; k1 <= Model::IMAX; k1++) {
+                    for (int k2 = k1 + 1; k2 <= Model::IMAX; k2++) {  //Starts at k1 + 1 to avoid duplicate pairs
                         CNFEquation::clause_t clause;
                         //At most one of these two variables can be true! If both are, there are two numbers in the cell.
                         //Thus, the clause is the disjunction of the two variables.
@@ -52,9 +52,9 @@ CNFEquation& parseModel(const Model& model) {
     }
     //3. Each row must have at most 1 of every number
     for (int j = 0; j < Model::COLS; j++) {
-        for (int k = 0; k <= Model::IMAX; k++) {
+        for (int k = 1; k <= Model::IMAX; k++) {
             for (int i1 = 0; i1 < Model::ROWS; i1++){
-                for (int i2 = 0; i2 < Model::ROWS; i2++) {
+                for (int i2 = i1 + 1; i2 < Model::ROWS; i2++) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i1, j, k), false));
                     clause.push_back(CNFEquation::makePair(variableID(i2, j, k), false));
@@ -65,7 +65,7 @@ CNFEquation& parseModel(const Model& model) {
     }
     //4. Each row must have at least 1 of every number
     for (int j = 0; j < Model::COLS; j++) {
-        for (int k = 0; k <= Model::IMAX; k++) {
+        for (int k = 1; k <= Model::IMAX; k++) {
             CNFEquation::clause_t clause;
             for (int i = 0; i < Model::ROWS; i++) {
                 clause.push_back(CNFEquation::makePair(variableID(i, j, k), true));
@@ -75,9 +75,9 @@ CNFEquation& parseModel(const Model& model) {
     }
     //5. Each column must have at most 1 of every number
     for (int i = 0; i < Model::ROWS; i++) {
-        for (int k = 0; k <= Model::IMAX; k++) {
+        for (int k = 1; k <= Model::IMAX; k++) {
             for (int j1 = 0; j1 < Model::COLS; j1++){
-                for (int j2 = 0; j2 < Model::COLS; j2++) {
+                for (int j2 = j1 + 1; j2 < Model::COLS; j2++) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i, j1, k), false));
                     clause.push_back(CNFEquation::makePair(variableID(i, j2, k), false));
@@ -88,7 +88,7 @@ CNFEquation& parseModel(const Model& model) {
     }
     //6. Each column must have at least 1 of every number
     for (int i = 0; i < Model::ROWS; i++) {
-        for (int k = 0; k <= Model::IMAX; k++) {
+        for (int k = 1; k <= Model::IMAX; k++) {
             CNFEquation::clause_t clause;
             for (int j = 0; j < Model::COLS; j++) {
                 clause.push_back(CNFEquation::makePair(variableID(i, j, k), true));
@@ -96,6 +96,8 @@ CNFEquation& parseModel(const Model& model) {
             eqn.addClause(clause);
         }
     }
+    //7. Each region must have at most 1 of every number
+    //8. Each region must have at least 1 of every number
 }
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
