@@ -97,7 +97,48 @@ CNFEquation& parseModel(const Model& model) {
         }
     }
     //7. Each region must have at most 1 of every number
+    for (int k = 1; k <= Model::IMAX; k++) {
+        for (int c1 = 0; c1 < Model::REGIONS_PER_SIDE; c1++) {
+            for (int c2 = 0; c2 < Model::REGIONS_PER_SIDE; c2++) {
+                for (int i = 0; i < Model::REGION_ROWS; i++) {
+                    for (int j = 0; j < Model::REGION_COLS; j++) {
+                        for (int c3 = j + 1; c3 < Model::REGIONS_PER_SIDE; c3++) {
+                            CNFEquation::clause_t clause;
+                            int var_1 = variableID(3*c1 + i, 3*c2 + j, k);
+                            int var_2 = variableID(3*c1 + i, 3*c2 + c3, k);
+                            clause.push_back(CNFEquation::makePair(var_1, false));
+                            clause.push_back(CNFEquation::makePair(var_2, false));
+                            eqn.addClause(clause);
+                        }
+                        for (int c3 = i + 1; c3 < Model::REGIONS_PER_SIDE; c3++) {
+                            for (int c4 = 1; c4 < Model::REGIONS_PER_SIDE; c4++) {
+                                CNFEquation::clause_t clause;
+                                int var_1 = variableID(3*c1 + i, 3*c2 + j, k);
+                                int var_2 = variableID(3*c1 + c3, 3*c2 + c4, k);
+                                clause.push_back(CNFEquation::makePair(var_1, false));
+                                clause.push_back(CNFEquation::makePair(var_2, false));
+                                eqn.addClause(clause);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     //8. Each region must have at least 1 of every number
+    for (int k = 1; k <= Model::IMAX; k++) {
+        CNFEquation::clause_t clause;
+        for (int c1 = 0; c1 < Model::REGIONS_PER_SIDE; c1++) {
+            for (int c2 = 0; c2 < Model::REGIONS_PER_SIDE; c2++) {
+                for (int i = 0; i < Model::REGION_ROWS; i++) {
+                    for (int j = 0; j < Model::REGION_COLS; j++) {
+                        clause.push_back(CNFEquation::makePair(variableID(3*c1 + i, 3*c2 + j, k), true));
+                    }
+                }
+            }
+        }
+        eqn.addClause(clause);
+    }
 }
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
