@@ -1,28 +1,23 @@
 #include "model.hpp"
 
+#include <assert.h>
+
 Model::Model() {
-    _grid = new Node[ROWS*COLS];
-    
     for(int i = 0; i < ROWS*COLS; i++) {
-        _grid[i].empty();
+        _grid[i].reset();
     }
 }
 
 Model::Model(Model::Grid grid) {
-    _grid = new Node[ROWS*COLS];
-    
     for(int i = 0; i < ROWS*COLS; i++) {
         _grid[i] = grid[i];
     }
 }
 
-~Model() {
-    delete[] grid;
+Model::~Model() {
 }
 
 Model::Model(const Model& to_copy) {
-    _grid = new Node[ROWS*COLS];
-
     for(int i = 0; i < ROWS*COLS; i++) {
         _grid[i] = to_copy._grid[i];
     }
@@ -34,60 +29,60 @@ Model& Model::operator=(const Model& to_copy) {
     }
 }
 
-void Model::undetermine(int region, int row, int col) {
-    undetermine(getIndex(region, row, col));
+void Model::unset(int region, int row, int col) {
+    unset(getIndex(region, row, col));
 }
 
-void Model::undetermine(int row, int col) {
-    undetermine(getIndex(row, col));
+void Model::unset(int row, int col) {
+    unset(getIndex(row, col));
 }
 
-void Model::undetermine(int index) {
+void Model::unset(int index) {
     assert(index >= 0 && index < ROWS*COLS);
 
-    _grid[i].empty();
+    _grid[index].reset();
 }
 
-void Model::set(int region, int row, int col, unsigned int value) {
-    set(getIndex(region, row, col, value);
+void Model::set(int region, int row, int col, int value) {
+    set(getIndex(region, row, col), value);
 }
 
-void Model::set(int row, int col, unsigned int value) {
+void Model::set(int row, int col, int value) {
     set(getIndex(row, col), value);
 }
 
-void Model::set(int index, unsigned int value) {
+void Model::set(int index, int value) {
     assert(index >= 0 && index < ROWS*COLS);
 
     _grid[index] = value;
 }
 
-unsigned int Model::value(int region, int row, int col) {
+Model::Node Model::value(int region, int row, int col) const {
     return value(getIndex(region, row, col));
 }
 
-unsigned int Model::value(int row, int col) {
+Model::Node Model::value(int row, int col) const {
     return value(getIndex(row, col));
 }
 
-unsigned int Model::value(int index) {
+Model::Node Model::value(int index) const {
     assert(index >= 0 && index < ROWS*COLS);
 
     return _grid[index].value();
 }
 
-int Model::getIndex(int region, int row, int col) {
+int Model::getIndex(int region, int row, int col) const {
     return getIndex(row + ((ROWS / REGIONS_PER_SIDE) * (region / REGIONS_PER_SIDE)),
-                    col + ((COLS / REGIONS_PER_SIDE) * (region % REGIONS_PER_SIDE)))
+                    col + ((COLS / REGIONS_PER_SIDE) * (region % REGIONS_PER_SIDE)));
 }
 
-int Model::getIndex(int row, int col) {
+int Model::getIndex(int row, int col) const {
     return col + (ROWS * row);
 }
 
-bool determined() {
+bool Model::determined() const {
     for(int i = 0; i < ROWS*COLS; i++) {
-        if(!_grid[i].determined()) {
+        if(!_grid[i]) {
             return false;
         }
     }

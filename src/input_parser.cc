@@ -14,7 +14,6 @@ int inputLoop() {
     int index = 0;
     for( ; !isspace(line[index]); index++) {
         if(line[index] == '\n') {
-            
         }
         else {
             buf.append(line[index]);
