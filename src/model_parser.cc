@@ -25,7 +25,7 @@ CNFEquation parseModel(const Model& model) {
     //1b. Every cell with a defined variable in the model must have that variable true in the equation
     for (int i = 0; i < Model::ROWS; i++) {
         for (int j = 0; j < Model::COLS; j++) {
-            if (model.value(i, j)) {    //Fixed number at cell in board
+            if (model.value(i, j)){    //Fixed number at cell in board
                 eqn.addVariable(variableID(i, j, model.value(i, j).value()), false);
             }
             //Treat all cells as Undefined cells
@@ -54,7 +54,7 @@ CNFEquation parseModel(const Model& model) {
     //3. Each row must have at most 1 of every number
     for (int j = 0; j < Model::COLS; j++) {
         for (int k = 1; k <= Model::IMAX; k++) {
-            for (int i1 = 0; i1 < Model::ROWS; i1++){
+            for (int i1 = 0; i1 < Model::ROWS - 1; i1++){
                 for (int i2 = i1 + 1; i2 < Model::ROWS; i2++) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i1, j, k), false));
@@ -77,7 +77,7 @@ CNFEquation parseModel(const Model& model) {
     //5. Each column must have at most 1 of every number
     for (int i = 0; i < Model::ROWS; i++) {
         for (int k = 1; k <= Model::IMAX; k++) {
-            for (int j1 = 0; j1 < Model::COLS; j1++){
+            for (int j1 = 0; j1 < Model::COLS - 1; j1++){
                 for (int j2 = j1 + 1; j2 < Model::COLS; j2++) {
                     CNFEquation::clause_t clause;
                     clause.push_back(CNFEquation::makePair(variableID(i, j1, k), false));
@@ -112,7 +112,7 @@ CNFEquation parseModel(const Model& model) {
                             eqn.addClause(clause);
                         }
                         for (int c3 = i + 1; c3 < Model::REGIONS_PER_SIDE; c3++) {
-                            for (int c4 = 1; c4 < Model::REGIONS_PER_SIDE; c4++) {
+                            for (int c4 = 1; c4 <= Model::REGIONS_PER_SIDE; c4++) {
                                 CNFEquation::clause_t clause;
                                 int var_1 = variableID(3*c1 + i, 3*c2 + j, k);
                                 int var_2 = variableID(3*c1 + c3, 3*c2 + c4, k);
@@ -127,20 +127,21 @@ CNFEquation parseModel(const Model& model) {
         }
     }
     //8. Each region must have at least 1 of every number
-    for (int k = 1; k <= Model::IMAX; k++) {
-        CNFEquation::clause_t clause;
-        for (int c1 = 0; c1 < Model::REGIONS_PER_SIDE; c1++) {
-            for (int c2 = 0; c2 < Model::REGIONS_PER_SIDE; c2++) {
-                for (int i = 0; i < Model::REGION_ROWS; i++) {
-                    for (int j = 0; j < Model::REGION_COLS; j++) {
+    //I'm very confused about this -- it's not presented in the same AND of ORs format as the other
+    //equations in the paper. I've implemented a fix, but it might cause issues with the solver -- TODO
+    for (int c1 = 0; c1 < Model::REGIONS_PER_SIDE; c1++) {
+        for (int c2 = 0; c2 < Model::REGIONS_PER_SIDE; c2++) {
+            for (int i = 0; i < Model::REGION_ROWS; i++) {
+                for (int j = 0; j < Model::REGION_COLS; j++) {
+                    CNFEquation::clause_t clause;
+                    for (int k = 1; k <= Model::IMAX; k++) {
                         clause.push_back(CNFEquation::makePair(variableID(3*c1 + i, 3*c2 + j, k), true));
                     }
+                    eqn.addClause(clause);
                 }
             }
         }
-        eqn.addClause(clause);
     }
-
     return eqn;
 }
 bool verifyEqns(const CNFEquation& eqn) {
