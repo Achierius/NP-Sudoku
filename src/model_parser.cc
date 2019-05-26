@@ -144,6 +144,23 @@ CNFEquation parseModel(const Model& model) {
     }
     return eqn;
 }
+
+Model parseEqns(const CNFEquation& eqn) {
+    Model model;
+
+    for (int i = 0; i < Model::ROWS; i++) {
+        for (int j = 0; j < Model::COLS; j++) {
+            for (int k = 1; k <= Model::IMAX; k++) {
+                if(eqn.getVariable(variableID(i, j, k)) && eqn.getVariable(variableID(i, j, k)).value()) {
+                    model.set(i, j, k);
+                }
+            }
+        }
+    }
+
+    return model;
+}
+
 bool verifyEqns(const CNFEquation& eqn) {
     return false;
 }
