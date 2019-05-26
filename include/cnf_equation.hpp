@@ -15,7 +15,7 @@ public:
   using value_t                   = std::optional<bool>;
   using variable_t                = uint64_t;
   using clause_t                  = std::vector<std::pair<variable_t, bool> >;
-  const static variable_t CNF_MAX = UINT64_MAX;
+  const static variable_t CNF_MAX = 100000;//UINT64_MAX;
   const static variable_t CNF_MIN = 0;
 
   CNFEquation();
