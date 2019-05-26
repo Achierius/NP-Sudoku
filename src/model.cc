@@ -27,6 +27,7 @@ Model& Model::operator=(const Model& to_copy) {
     for(int i = 0; i < ROWS*COLS; i++) {
         _grid[i] = to_copy._grid[i];
     }
+    return *this;
 }
 
 void Model::unset(int region, int row, int col) {
@@ -68,7 +69,7 @@ Model::Node Model::value(int row, int col) const {
 Model::Node Model::value(int index) const {
     assert(index >= 0 && index < ROWS*COLS);
 
-    return _grid[index].value();
+    return _grid[index];
 }
 
 int Model::getIndex(int region, int row, int col) const {
