@@ -23,6 +23,7 @@ CNFEquation& CNFEquation::operator=(const CNFEquation& to_copy) {
   for(auto i : {CNF_MIN, CNF_MAX}) {
     variables_[i] = to_copy.variables_[i];
   }
+  clauses_.clear();
   for(auto i : to_copy.clauses_) {
     clauses_.push_back(i);
   }
@@ -54,9 +55,9 @@ std::pair<CNFEquation::variable_t, bool> CNFEquation::makePair(variable_t variab
 }
 
 void CNFEquation::addVariable(variable_t variable, bool negated) {
-  //clause_t a;
-  //a.push_back(makePair(variable, negated));
-  //addClause(a);
+  clause_t a;
+  a.push_back(makePair(variable, negated));
+  addClause(a);
 }
 
 void CNFEquation::addClause(const clause_t& new_clause) {
