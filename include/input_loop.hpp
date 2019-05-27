@@ -6,38 +6,55 @@
 #include <string>
 #include "model.hpp"
 
-using InputCommand = void (*)(int);
+/* Also holds commands exit, quit, q, auto-show, timeout, try, clear */
+void inputLoop();
 
-std::vector<Model> boards;
+/* Command: load random
+ *          load example <name>
+ *          load new <path>
+ * Loads new Sudoku board model.
+ */
+Model commandLoad(int option, std::string dest);
 
-int inputLoop();
+/* Command: display instance
+ *          display solution
+ *          display pretty-solution
+ * Print board or solution to board.
+ * Return 1 if display target DNE, else 0.
+ */
+int commandDisplay(int option);
 
-void parseLine(std::string line);
+/* Command: Show
+ * Attempts the following commands in order until one returns 0:
+ * display pretty-solution
+ * display solution
+ * display instance
+ * Return 1 if {display instance} returns 0, else 0.
+ */
+int commandShow();
 
-InputCommand parseCommand(std::string commandString);
+/* Command: solve <solver>
+ * Attempts to solve current Instance with target solver.
+ * Return values:
+ *  0: Success
+ *  1: Solver not found
+ *  2: No board loaded
+ *  3: Solver could not solve board / timed out
+ */
+int commandSolve(std::string solver);
 
-int parseInt(std::string intString);
+/* Command: solve <i> <j> <val>
+ * Sets the ith row, jth column entry of the Instance -- (i, j) -- to val.
+ * If val = 0, empties (i, j).
+ * Return 0 if success, 1 if val > 9 || val < 0, 2 if Instance DNE.
+ */
+int commandEdit(int i, int j, int val);
 
-int embedN4(int a, int b, int c, int d);
-int embedN3(int a, int b, int c);
-int embedN2(int a, int b);
-
-std::tuple<int, int> revertN2(int e);
-std::tuple<int, int, int> revertN3(int e);
-std::tuple<int, int, int, int> revertN4(int e);
-
-void commandExit(int unused);
-
-void commandNewBoard(int boardID);
-
-void commandClearBoard(int boardID);
-
-void commandDisplayBoard(int boardID);
-
-void commandDeleteBoard(int boardID);
-
-void commandRandomizeBoard(int boardID);
-
-void verifyBoard(int boardID);
+/* Command: edit<i> <j> <val>
+ * Sets the ith row, jth column entry of the Solution -- (i, j) -- to val.
+ * If val = 0, empties (i, j).
+ * Return 0 if success, 1 if val > 9 || val < 0, 2 if Instance DNE.
+ */
+int commandSolve(int i, int j, int val);
 
 #endif//__NP_SUDOKU_INPUT_LOOP
